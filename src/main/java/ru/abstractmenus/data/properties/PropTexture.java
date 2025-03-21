@@ -16,6 +16,7 @@ import ru.abstractmenus.util.bukkit.ItemUtil;
 import ru.abstractmenus.util.bukkit.Skulls;
 import ru.abstractmenus.api.Handlers;
 
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -23,7 +24,6 @@ public class PropTexture implements ItemProperty {
 
     private static final String TEXTURE_PREFIX = "http://textures.minecraft.net/texture/";
     private static final String BASE64_PREFIX = "base64:";
-    private static final JsonParser PARSER = new JsonParser();
 
     private final String texture;
 
@@ -55,13 +55,12 @@ public class PropTexture implements ItemProperty {
     }
 
     private String fetchTextureUrl(String value) {
-        if (isLink(value)) {
-            return value;
-        } else if (isBase64(value)) {
-            String withoutPrefix = value.substring(BASE64_PREFIX.length());
-            return getUrlFromBase64(withoutPrefix);
+        if (isBase64(value)) {
+            return value.substring(BASE64_PREFIX.length());
+        } else if (isLink(value)) {
+            return getBase64FromUrl(value);
         } else {
-            return TEXTURE_PREFIX + value;
+            return getBase64FromUrl(TEXTURE_PREFIX + value);
         }
     }
 
@@ -73,13 +72,17 @@ public class PropTexture implements ItemProperty {
         return str.startsWith(BASE64_PREFIX);
     }
 
-    private String getUrlFromBase64(String base46) {
-        String decoded = new String(Base64.getDecoder().decode(base46), StandardCharsets.UTF_8);
-        JsonObject json = PARSER.parse(decoded).getAsJsonObject();
+    public static String getBase64FromUrl(String textureUrl) {
+        JsonObject textureData = new JsonObject();
+        JsonObject textures = new JsonObject();
+        JsonObject skin = new JsonObject();
 
-        return json.get("textures").getAsJsonObject()
-                .get("SKIN").getAsJsonObject()
-                .get("url").getAsString();
+        skin.addProperty("url", textureUrl);
+        textures.add("SKIN", skin);
+        textureData.add("textures", textures);
+
+        String json = textureData.toString();
+        return Base64.getEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8));
     }
 
     public static class Serializer implements NodeSerializer<PropTexture> {
@@ -88,6 +91,5 @@ public class PropTexture implements ItemProperty {
         public PropTexture deserialize(Class type, ConfigNode node) throws NodeSerializeException {
             return new PropTexture(node.getString());
         }
-
     }
 }

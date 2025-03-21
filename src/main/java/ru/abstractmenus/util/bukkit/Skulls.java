@@ -1,26 +1,30 @@
 package ru.abstractmenus.util.bukkit;
 
-import com.mojang.authlib.GameProfile;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import ru.abstractmenus.api.Logger;
-import ru.abstractmenus.services.ProfileStorage;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.UUID;
 
 public final class Skulls {
 
     private Skulls() {
     }
 
-    public static ItemStack getCustomSkull(String url) {
-        GameProfile profile = MojangApi.createProfile(url);
+    public static ItemStack getCustomSkull(String texture) {
+        UUID uuid = UUID.nameUUIDFromBytes(("Skull:" + texture).getBytes());
+
+        PlayerProfile profile = Bukkit.createProfile(uuid);
+        profile.setProperty(new ProfileProperty("textures", texture));
+
         return getCustomSkull(profile);
     }
 
-    public static ItemStack getCustomSkull(GameProfile profile) {
+    public static ItemStack getCustomSkull(com.destroystokyo.paper.profile.PlayerProfile profile) {
         ItemStack head = createSkullItem();
 
         if (profile == null) return head;
@@ -29,39 +33,25 @@ public final class Skulls {
 
         if (headMeta == null) return null;
 
-        Field profileField;
-
-        try {
-            Method method = headMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
-            method.setAccessible(true);
-            method.invoke(headMeta, profile);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-            try {
-                profileField = headMeta.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profileField.set(headMeta, profile);
-            } catch (NoSuchFieldException | IllegalAccessException ex2) {
-                ex2.printStackTrace();
-            }
-        }
-
+        headMeta.setPlayerProfile(profile);
         head.setItemMeta(headMeta);
 
         return head;
     }
 
     public static ItemStack getPlayerSkull(String playerName) {
-        GameProfile profile = ProfileStorage.instance().getProfile(playerName);
+        Player player = Bukkit.getPlayer(playerName);
+
+        if (player == null) {
+            Logger.info("Player '" + playerName + "' is not online or not found.");
+            return null;
+        }
+
+        PlayerProfile profile = player.getPlayerProfile();
 
         if (profile == null) {
-            Logger.info("Profile '" + playerName + "' not found. Trying to load ...");
-
-            profile = MojangApi.loadProfileWithSkin(playerName);
-
-            if (profile == null)
-                profile = ProfileStorage.DEF_PROFILE;
-
-            ProfileStorage.instance().add(playerName, profile);
+            Logger.info("PlayerProfile for '" + playerName + "' not found.");
+            return null;
         }
 
         return getCustomSkull(profile);
@@ -74,5 +64,4 @@ public final class Skulls {
             return new ItemStack(ItemUtil.getHeadMaterial());
         }
     }
-
 }

@@ -1,5 +1,6 @@
 package ru.abstractmenus.data.properties;
 
+import ru.abstractmenus.api.Logger;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
@@ -42,7 +43,7 @@ public class PropSkullOwner implements ItemProperty {
 
         ItemUtil.merge(item, skullItem);
 
-        //Logger.severe("Cannot get head of player " + replaced + ". Item is null");
+        Logger.severe("Cannot get head of player " + replaced + ". Item is null");
     }
 
     public static class Serializer implements NodeSerializer<PropSkullOwner> {

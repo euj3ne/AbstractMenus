@@ -1,16 +1,17 @@
 package ru.abstractmenus.data.properties;
 
+import org.bukkit.FireworkEffect;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkEffectMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import ru.abstractmenus.api.inventory.ItemProperty;
+import ru.abstractmenus.api.inventory.Menu;
 import ru.abstractmenus.datatype.TypeInt;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
-import org.bukkit.FireworkEffect;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import ru.abstractmenus.api.inventory.Menu;
-import ru.abstractmenus.api.inventory.ItemProperty;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class PropFireworkData implements ItemProperty {
     private final TypeInt power;
     private final List<FireworkEffect> effects;
 
-    private PropFireworkData(TypeInt power, List<FireworkEffect> effects){
+    private PropFireworkData(TypeInt power, List<FireworkEffect> effects) {
         this.power = power;
         this.effects = effects;
     }
@@ -36,10 +37,11 @@ public class PropFireworkData implements ItemProperty {
 
     @Override
     public void apply(ItemStack itemStack, ItemMeta meta, Player player, Menu menu) {
-        if(meta instanceof FireworkMeta){
-            FireworkMeta fireworkMeta = (FireworkMeta) meta;
+        if (meta instanceof FireworkMeta fireworkMeta) {
             fireworkMeta.setPower(power.getInt(player, menu));
             fireworkMeta.addEffects(effects);
+        } else if (meta instanceof FireworkEffectMeta effectMeta && !effects.isEmpty()) {
+            effectMeta.setEffect(effects.getFirst());
         }
     }
 
@@ -51,6 +53,5 @@ public class PropFireworkData implements ItemProperty {
             List<FireworkEffect> effects = node.node("effects").getList(FireworkEffect.class);
             return new PropFireworkData(power, effects);
         }
-
     }
 }

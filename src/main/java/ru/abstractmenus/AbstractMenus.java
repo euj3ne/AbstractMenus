@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
+import org.black_ixx.playerpoints.PlayerPoints;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -67,7 +68,6 @@ public final class AbstractMenus extends JavaPlugin implements AbstractMenusPlug
     private static AbstractMenus instance;
 
     private CommandManager commandManager;
-    private Metrics metrics;
     private FoliaLib foliaLib;
 
     @Getter
@@ -102,7 +102,6 @@ public final class AbstractMenus extends JavaPlugin implements AbstractMenusPlug
             instance = this;
             isProxyMode = determineProxy();
             Logger.set(getLogger());
-            metrics = new Metrics(this);
             foliaLib = new FoliaLib(this);
 
             MainConfig config = new MainConfig();
@@ -276,6 +275,15 @@ public final class AbstractMenus extends JavaPlugin implements AbstractMenusPlug
         if (checkDependency("SkinsRestorer")) {
             Handlers.setSkinHandler(new SkinsRestorerHandler(isProxyMode, this));
             Logger.info("Using SkinsRestorer as skins provider");
+        }
+        if (checkDependency("PlayerPoints")) {
+            PlayerPoints playerPoints = (PlayerPoints) Bukkit.getPluginManager().getPlugin("PlayerPoints");
+            if (playerPoints != null) {
+                Handlers.setPointsHandler(new PlayerPointsHandler(playerPoints));
+                Logger.info("Using PlayerPoints as points provider");
+            } else {
+                Logger.warning("PlayerPoints plugin enabled but instance is null");
+            }
         }
     }
 

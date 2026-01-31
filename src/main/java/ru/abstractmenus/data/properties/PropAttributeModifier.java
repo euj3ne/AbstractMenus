@@ -55,7 +55,7 @@ public class PropAttributeModifier implements ItemProperty {
             for (ConfigNode entry : nodes) {
                 try {
                     String modifierType = entry.node("type").getString();
-                    Attribute attribute = Registry.ATTRIBUTE.getOrThrow(NamespacedKey.minecraft(modifierType.toLowerCase()));
+                    Attribute attribute = Registry.ATTRIBUTE.get(NamespacedKey.minecraft(modifierType.toLowerCase()));
                     double amount = entry.node("amount").getDouble(0);
                     AttributeModifier.Operation operation = AttributeModifier.Operation.valueOf(entry.node("operation").getString("add_number").toUpperCase());
 

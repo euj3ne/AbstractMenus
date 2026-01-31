@@ -22,6 +22,7 @@ public final class MenuRules {
         Types.registerRule("heldItem", RuleHeldItem.class, new RuleHeldItem.Serializer());
         Types.registerRule("level", RuleLevel.class, new RuleLevel.Serializer());
         Types.registerRule("money", RuleMoney.class, new RuleMoney.Serializer());
+        Types.registerRule("points", RulePoints.class, new RulePoints.Serializer());
         Types.registerRule("online", RuleOnline.class, new RuleOnline.Serializer());
         Types.registerRule("bungeeOnline", RuleBungeeOnline.class, new RuleBungeeOnline.Serializer());
         Types.registerRule("permission", RulePermission.class, new RulePermission.Serializer());

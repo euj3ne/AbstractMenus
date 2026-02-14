@@ -27,7 +27,7 @@ public final class BungeeManager implements PluginMessageListener {
     private ScheduledExecutorService timer;
     private ScheduledFuture<?> task;
 
-    private final Set<String> servers = new HashSet<>();
+    private final Set<String> servers = ConcurrentHashMap.newKeySet();
     private final Map<String, Integer> playersOnline = new ConcurrentHashMap<>();
     private final Map<String, InetSocketAddress> serverAddresses = new ConcurrentHashMap<>();
     private final Map<String, Boolean> serversOnline = new ConcurrentHashMap<>();

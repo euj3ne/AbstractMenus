@@ -13,8 +13,8 @@ public final class FileUtils {
     }
 
     public static String getExtension(String name) {
-        String[] arr = name.split("\\.");
-        return (arr.length > 0) ? arr[arr.length - 1] : null;
+        int idx = name.lastIndexOf('.');
+        return (idx != -1) ? name.substring(idx + 1) : null;
     }
 
     public static int indexOfLastSeparator(String filename) {

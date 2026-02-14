@@ -22,6 +22,8 @@ public class RuleOr implements Rule {
 
     @Override
     public boolean check(Player player, Menu menu, Item clickedItem) {
+        // Intentionally non-short-circuit: all groups are evaluated so that each group's
+        // actions/denyActions are executed regardless of the overall result
         boolean result = false;
         if(groups != null) {
             for(RuleOr.Group group : groups) {

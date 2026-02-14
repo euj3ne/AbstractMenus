@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import ru.abstractmenus.api.inventory.Menu;
 import ru.abstractmenus.api.inventory.ItemProperty;
-import ru.abstractmenus.util.NMS;
 
 public class PropNbt implements ItemProperty {
 
@@ -36,10 +35,6 @@ public class PropNbt implements ItemProperty {
         nbti.mergeCompound(this.nbt);
         ItemStack nbtItem = nbti.getItem();
         item.setType(nbtItem.getType());
-
-        if (NMS.getMinorVersion() <= 12)
-            item.setData(nbtItem.getData());
-
         item.setAmount(nbtItem.getAmount());
         item.setItemMeta(nbtItem.getItemMeta());
     }

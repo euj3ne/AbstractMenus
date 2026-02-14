@@ -75,6 +75,8 @@ public class SimpleMenu extends AbstractMenu {
                 try {
                     ItemStack built = item.build(player, this);
 
+                    if (built == null) continue;
+
                     if (built.getAmount() > 0) {
                         Slot slot = ((InventoryItem) item).getSlot(player, this);
 

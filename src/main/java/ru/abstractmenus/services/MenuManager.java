@@ -37,7 +37,7 @@ public final class MenuManager {
     private final Plugin plugin;
     private final Path menuFolder;
 
-    private final Map<String, Menu> menus = new HashMap<>();
+    private final Map<String, Menu> menus = new ConcurrentHashMap<>();
     private final Map<UUID, Menu> openedMenus = new ConcurrentHashMap<>();
     private final Map<UUID, ActionInputChat.InputAction> inputActions = new ConcurrentHashMap<>();
 
@@ -345,20 +345,22 @@ public final class MenuManager {
             return files;
         }
 
-        Files.list(folder).forEach((path) -> {
-            try {
-                if (Files.isDirectory(path)) {
-                    files.addAll(getAllFiles(path));
-                }
-                if ("conf".equalsIgnoreCase(FileUtils.getExtension(path.toFile().getName()))) {
-                    if (!checkInvisible(path)) {
-                        files.add(path);
+        try (var stream = Files.list(folder)) {
+            stream.forEach((path) -> {
+                try {
+                    if (Files.isDirectory(path)) {
+                        files.addAll(getAllFiles(path));
                     }
+                    if ("conf".equalsIgnoreCase(FileUtils.getExtension(path.toFile().getName()))) {
+                        if (!checkInvisible(path)) {
+                            files.add(path);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+            });
+        }
 
         return files;
     }
@@ -378,7 +380,9 @@ public final class MenuManager {
         public void run() {
             for (Map.Entry<UUID, Menu> entry : openedMenus.entrySet()) {
                 Player player = Bukkit.getPlayer(entry.getKey());
-                entry.getValue().update(player);
+                if (player != null && player.isOnline()) {
+                    entry.getValue().update(player);
+                }
             }
         }
 

@@ -36,7 +36,7 @@ public final class HeadAnimManager {
         if (list != null) {
             String key = createKey(animName, id);
             int currentFrame = currentFrames.computeIfAbsent(key, v -> 0);
-            String frame = list.get(currentFrames.computeIfAbsent(key, v -> 0));
+            String frame = list.get(currentFrame);
             if (++currentFrame > list.size() - 1) currentFrame = 0;
             currentFrames.put(key, currentFrame);
             return frame;

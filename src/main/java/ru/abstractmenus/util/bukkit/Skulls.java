@@ -58,10 +58,6 @@ public final class Skulls {
     }
 
     public static ItemStack createSkullItem() {
-        try {
-            return new ItemStack(ItemUtil.getHeadMaterial(), 1, (short) 3);
-        } catch (Throwable t) {
-            return new ItemStack(ItemUtil.getHeadMaterial());
-        }
+        return new ItemStack(ItemUtil.getHeadMaterial());
     }
 }

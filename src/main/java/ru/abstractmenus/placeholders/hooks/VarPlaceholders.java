@@ -12,41 +12,50 @@ public class VarPlaceholders {
 
         @Override
         public String replace(String placeholder, Player player) {
-            String[] arr = placeholder.split(":");
+            int colonIdx = placeholder.indexOf(':');
+            if (colonIdx == -1 || colonIdx >= placeholder.length() - 1) return null;
 
-            if (arr.length > 1) {
-                String[] data = arr[1].split("\\.");
-                Var var = null;
-
-                if (data.length == 1) {
-                    var = VariableManagerImpl.instance().getGlobal(data[0]);
-                } else if (data.length == 2) {
-                    var = VariableManagerImpl.instance().getPersonal(data[0], data[1]);
-                }
-
-                return var != null ? var.value() : (arr.length == 3 ? arr[2] : "");
+            String rest = placeholder.substring(colonIdx + 1);
+            String defaultVal = "";
+            int secondColon = rest.indexOf(':');
+            if (secondColon != -1) {
+                defaultVal = rest.substring(secondColon + 1);
+                rest = rest.substring(0, secondColon);
             }
 
-            return null;
+            int dotIdx = rest.indexOf('.');
+            Var var;
+            if (dotIdx == -1) {
+                var = VariableManagerImpl.instance().getGlobal(rest);
+            } else {
+                var = VariableManagerImpl.instance().getPersonal(
+                        rest.substring(0, dotIdx), rest.substring(dotIdx + 1));
+            }
+
+            return var != null ? var.value() : defaultVal;
         }
 
     }
 
     public static class VarPlayerHook implements PlaceholderHook {
 
-
         @Override
         public String replace(String placeholder, Player player) {
             if (player == null) return null;
 
-            String[] arr = placeholder.split(":");
+            int colonIdx = placeholder.indexOf(':');
+            if (colonIdx == -1 || colonIdx >= placeholder.length() - 1) return null;
 
-            if (arr.length > 1) {
-                Var var = VariableManagerImpl.instance().getPersonal(player.getName(), arr[1]);
-                return var != null ? var.value() : (arr.length == 3 ? arr[2] : "");
+            String varName = placeholder.substring(colonIdx + 1);
+            String defaultVal = "";
+            int secondColon = varName.indexOf(':');
+            if (secondColon != -1) {
+                defaultVal = varName.substring(secondColon + 1);
+                varName = varName.substring(0, secondColon);
             }
 
-            return null;
+            Var var = VariableManagerImpl.instance().getPersonal(player.getName(), varName);
+            return var != null ? var.value() : defaultVal;
         }
 
     }
@@ -55,13 +64,11 @@ public class VarPlaceholders {
 
         @Override
         public String replace(String placeholder, Player player) {
-            String[] arr = placeholder.split(":");
+            int colonIdx = placeholder.indexOf(':');
+            if (colonIdx == -1 || colonIdx >= placeholder.length() - 1) return null;
 
-            if (arr.length > 1) {
-                return getVarTime(VariableManagerImpl.instance().getGlobal(arr[1]));
-            }
-
-            return null;
+            return getVarTime(VariableManagerImpl.instance().getGlobal(
+                    placeholder.substring(colonIdx + 1)));
         }
     }
 
@@ -71,13 +78,11 @@ public class VarPlaceholders {
         public String replace(String placeholder, Player player) {
             if (player == null) return null;
 
-            String[] arr = placeholder.split(":");
+            int colonIdx = placeholder.indexOf(':');
+            if (colonIdx == -1 || colonIdx >= placeholder.length() - 1) return null;
 
-            if (arr.length > 1) {
-                return getVarTime(VariableManagerImpl.instance().getPersonal(player.getName(), arr[1]));
-            }
-
-            return null;
+            return getVarTime(VariableManagerImpl.instance().getPersonal(
+                    player.getName(), placeholder.substring(colonIdx + 1)));
         }
     }
 

@@ -21,6 +21,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
@@ -78,7 +79,7 @@ public class Metrics {
     private final Plugin plugin;
 
     // A list with all custom charts
-    private final List<CustomChart> charts = new ArrayList<>();
+    private final List<CustomChart> charts = new CopyOnWriteArrayList<>();
 
     /**
      * Class constructor.

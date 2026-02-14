@@ -1,7 +1,7 @@
 main: 'ru.abstractmenus.AbstractMenus'
 name: 'AbstractMenus'
 version: ${version}
-api-version: '1.13'
+api-version: '1.21'
 author: 'Nanit, BrainRTP'
 folia-supported: true
 softdepend:
@@ -26,5 +26,3 @@ commands:
   varp:
     permission: 'am.admin'
     description: 'Personal variables control commands'
-libraries:
-  - 'org.openjdk.nashorn:nashorn-core:15.3'

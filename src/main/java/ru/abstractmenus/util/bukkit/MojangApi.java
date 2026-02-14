@@ -4,11 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
+import org.bukkit.Bukkit;
 import ru.abstractmenus.api.Logger;
-import ru.abstractmenus.util.NMS;
-import ru.abstractmenus.util.StringUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,28 +72,19 @@ public final class MojangApi {
         return textureToUrl(getTexture(premiumUuid));
     }
 
-    public static GameProfile createProfile(String skinUrl) {
-        GameProfile profile;
-
-        if (NMS.getMinorVersion() >= 20) {
-            profile = new GameProfile(generateUUID(skinUrl), "");
-        } else {
-            profile = new GameProfile(generateUUID(skinUrl), null);
-        }
-
-        if (profile.getProperties() == null)
-            throw new IllegalStateException("Profile doesn't contains a property map");
+    public static PlayerProfile createProfile(String skinUrl) {
+        PlayerProfile profile = Bukkit.createProfile(generateUUID(skinUrl), "");
 
         byte[] prop = String.format("{textures:{SKIN:{url:\"%s\"}}}", skinUrl).getBytes(StandardCharsets.UTF_8);
         String encodedData = Base64.getEncoder().encodeToString(prop);
-        profile.getProperties().put("textures", new Property("textures", encodedData));
+        profile.setProperty(new ProfileProperty("textures", encodedData));
 
         return profile;
     }
 
-    public static GameProfile loadProfileWithSkin(String playerName) {
+    public static PlayerProfile loadProfileWithSkin(String playerName) {
         UUID uuid = MojangApi.getUUID(playerName);
-        GameProfile profile = null;
+        PlayerProfile profile = null;
 
         if (uuid != null) {
             String url = MojangApi.getSkinUrl(uuid);

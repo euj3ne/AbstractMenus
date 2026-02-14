@@ -1,21 +1,12 @@
 package ru.abstractmenus.nms.actionbar;
 
 import org.bukkit.entity.Player;
-import ru.abstractmenus.util.NMS;
 
-public abstract class ActionBar extends NMS {
+public abstract class ActionBar {
 
-    private static ActionBar bar;
+    private static volatile ActionBar bar;
 
-    public static void init() throws ReflectiveOperationException {
-        int version = NMS.getMinorVersion();
-
-        if (version == 8) {
-            bar = new ActionBar_1_8();
-            return;
-        }
-
-        // Use deprecated actionbar api until resolve the problem with net.kyori.adventure package replacing
+    public static void init() {
         bar = new ActionBar_1_9();
     }
 

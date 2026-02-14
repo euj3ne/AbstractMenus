@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractMenu implements Menu {
 
@@ -72,7 +73,7 @@ public abstract class AbstractMenu implements Menu {
 
     @Setter
     protected TypeSlot draggableSlots;
-    protected Map<Integer, ItemStack> placedItems;
+    protected Map<Integer, ItemStack> placedItems = new ConcurrentHashMap<>();
     @Getter
     protected ItemStack lastPlaced = ItemUtil.empty();
     @Getter
@@ -114,9 +115,7 @@ public abstract class AbstractMenu implements Menu {
         slot.getSlots(index -> {
             showedItems.put(index, item);
             inventory.setItem(index, item.build(player, this));
-
-            if (placedItems != null)
-                placedItems.remove(index);
+            placedItems.remove(index);
         });
     }
 
@@ -173,33 +172,31 @@ public abstract class AbstractMenu implements Menu {
     }
 
     public ItemStack getPlacedItem(int slot) {
-        if (placedItems == null) return ItemUtil.empty();
         return placedItems.getOrDefault(slot, ItemUtil.empty());
     }
 
     public void dropPlaced(Player player) {
-        if (draggableSlots != null && placedItems != null) {
+        if (draggableSlots != null && !placedItems.isEmpty()) {
             Location loc = player.getEyeLocation();
             for (ItemStack item : placedItems.values()) {
                 player.getWorld()
                         .dropItem(loc, item)
                         .setVelocity(loc.getDirection().multiply(0.2F));
             }
+            placedItems.clear();
         }
     }
 
     public void removePlacedItem(int slot, int amount) {
-        if (placedItems != null) {
-            ItemStack placed = placedItems.get(slot);
+        ItemStack placed = placedItems.get(slot);
 
-            if (placed != null) {
-                if (amount >= placed.getAmount()) {
-                    placedItems.remove(slot);
-                    inventory.clear(slot);
-                } else {
-                    placed.setAmount(placed.getAmount() - amount);
-                    inventory.setItem(slot, placed);
-                }
+        if (placed != null) {
+            if (amount >= placed.getAmount()) {
+                placedItems.remove(slot);
+                inventory.clear(slot);
+            } else {
+                placed.setAmount(placed.getAmount() - amount);
+                inventory.setItem(slot, placed);
             }
         }
     }
@@ -217,8 +214,6 @@ public abstract class AbstractMenu implements Menu {
     }
 
     public void placeItem(Player player, int slot, ItemStack item) {
-        if (placedItems == null) placedItems = new HashMap<>();
-
         ItemStack last = placedItems.get(slot);
 
         if (item.isSimilar(last)) {
@@ -240,8 +235,6 @@ public abstract class AbstractMenu implements Menu {
     }
 
     public boolean takeItem(Player player, int slot, int amount) {
-        if (placedItems == null) return false;
-
         ItemStack old = placedItems.get(slot);
 
         if (old == null) return false;
@@ -345,6 +338,7 @@ public abstract class AbstractMenu implements Menu {
         try {
             AbstractMenu menu = (AbstractMenu) super.clone();
             menu.showedItems = new HashMap<>();
+            menu.placedItems = new ConcurrentHashMap<>();
             return menu;
         } catch (CloneNotSupportedException e) {
             return null;

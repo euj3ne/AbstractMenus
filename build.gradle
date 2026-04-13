@@ -106,7 +106,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.14.3'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.14.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation files('libs/paper-1.20.6-147.jar')
+
+    // MockBukkit — in-memory Paper API mock for integration tests
+    testImplementation 'org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.108.0'
 
     testImplementation 'org.openjdk.jmh:jmh-core:1.37'
     testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'

@@ -52,20 +52,21 @@ public final class ProfileStorage implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
+        // Capture profile on main thread (Bukkit API requirement)
+        PlayerProfile profile = fetchProfile(event.getPlayer());
+        String playerName = event.getPlayer().getName();
+
+        add(playerName, profile);
+
+        // HTTP calls to Mojang API run async
         BukkitTasks.runTaskAsync(() -> {
-            PlayerProfile profile = fetchProfile(event.getPlayer());
+            boolean hasTexture = profile != null && profile.getProperties().stream()
+                    .anyMatch(p -> p.getName().equals("textures"));
 
-            add(event.getPlayer().getName(), profile);
-
-            if (profile != null) {
-                boolean hasTexture = profile.getProperties().stream()
-                        .anyMatch(p -> p.getName().equals("textures"));
-
-                if (!hasTexture)
-                    profile = MojangApi.loadProfileWithSkin(event.getPlayer().getName());
-
-                if (profile != null) {
-                    add(event.getPlayer().getName(), profile);
+            if (!hasTexture) {
+                PlayerProfile fetched = MojangApi.loadProfileWithSkin(playerName);
+                if (fetched != null) {
+                    add(playerName, fetched);
                 }
             }
         });

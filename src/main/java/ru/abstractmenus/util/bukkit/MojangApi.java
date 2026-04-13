@@ -11,6 +11,7 @@ import ru.abstractmenus.api.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -29,7 +30,7 @@ public final class MojangApi {
     }
 
     public static UUID getUUID(String name) {
-        try (InputStream in = new URL(String.format(UUID_URL, name)).openStream()) {
+        try (InputStream in = openConnection(String.format(UUID_URL, name))) {
             String jsonString = getLine(in);
 
             if (jsonString != null && !jsonString.isEmpty()) {
@@ -45,7 +46,7 @@ public final class MojangApi {
     public static String getTexture(UUID premiumUuid) {
         String url = String.format(SKIN_URL, clearUUID(premiumUuid));
 
-        try (InputStream in = new URL(url).openStream()) {
+        try (InputStream in = openConnection(url)) {
             String jsonString = getLine(in);
 
             if (jsonString != null && !jsonString.isEmpty()) {
@@ -110,13 +111,26 @@ public final class MojangApi {
         return null;
     }
 
+    private static InputStream openConnection(String url) throws IOException {
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        conn.setConnectTimeout(5000);
+        conn.setReadTimeout(5000);
+        try {
+            return conn.getInputStream();
+        } catch (IOException e) {
+            conn.disconnect();
+            throw e;
+        }
+    }
+
     private static String getLine(InputStream in) {
         if (in == null) return null;
 
-        Scanner scanner = new Scanner(in);
-        StringBuilder builder = new StringBuilder();
-        while (scanner.hasNext()) builder.append(scanner.next());
-        return builder.toString();
+        try (Scanner scanner = new Scanner(in, StandardCharsets.UTF_8)) {
+            StringBuilder builder = new StringBuilder();
+            while (scanner.hasNext()) builder.append(scanner.next());
+            return builder.toString();
+        }
     }
 
     private static String clearUUID(UUID uuid) {

@@ -79,14 +79,24 @@ public class SimpleItem implements Item {
     }
 
     public static void applyProperties(Collection<ItemProperty> props, ItemStack item, Player player, Menu menu) {
+        ItemMeta meta = null;
+
         for (ItemProperty property : props) {
             if (property.isApplyMeta()) {
-                ItemMeta meta = item.getItemMeta();
+                if (meta == null) meta = item.getItemMeta();
                 property.apply(item, meta, player, menu);
-                item.setItemMeta(meta);
             } else {
+                // Flush pending meta before non-meta property (may change item type)
+                if (meta != null) {
+                    item.setItemMeta(meta);
+                    meta = null;
+                }
                 property.apply(item, item.getItemMeta(), player, menu);
             }
+        }
+
+        if (meta != null) {
+            item.setItemMeta(meta);
         }
     }
 

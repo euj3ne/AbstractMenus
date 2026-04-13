@@ -38,12 +38,11 @@ public class PropSkullOwner implements ItemProperty {
         ItemStack skullItem = Skulls.getPlayerSkull(replaced);
 
         if (skullItem == null) {
+            Logger.warning("Cannot get head of player " + replaced + ". Using default skull.");
             skullItem = Skulls.createSkullItem();
         }
 
         ItemUtil.merge(item, skullItem);
-
-        Logger.severe("Cannot get head of player " + replaced + ". Item is null");
     }
 
     public static class Serializer implements NodeSerializer<PropSkullOwner> {

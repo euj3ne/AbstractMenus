@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.abstractmenus.MainConfig;
 import ru.abstractmenus.api.Logger;
 import ru.abstractmenus.api.variables.Var;
+import ru.abstractmenus.util.bukkit.BukkitTasks;
 import ru.abstractmenus.variables.VariableManagerImpl;
 
 import java.io.IOException;
@@ -156,18 +157,21 @@ public final class BungeeManager implements PluginMessageListener {
     }
 
     private void pingTask() {
+        // TCP ping stays on this async thread (blocking I/O); plugin messaging must run on the main thread.
         if (getServers().isEmpty()) {
-            sendPluginMessage("GetServers");
+            BukkitTasks.runTask(() -> sendPluginMessage("GetServers"));
             return;
         }
 
         for (String server : getServers()) {
-            if (getAddress(server) == null)
-                sendPluginMessage("ServerIP", server);
-
-            sendPluginMessage("PlayerCount", server);
-
             serversOnline.put(server.toLowerCase(), ping(server));
+
+            BukkitTasks.runTask(() -> {
+                if (getAddress(server) == null)
+                    sendPluginMessage("ServerIP", server);
+
+                sendPluginMessage("PlayerCount", server);
+            });
         }
     }
 

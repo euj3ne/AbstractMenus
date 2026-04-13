@@ -85,6 +85,14 @@ public class PropTexture implements ItemProperty {
         return Base64.getEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * Pre-build and cache skull for static textures (no placeholders).
+     */
+    public void warmup() {
+        if (texture.indexOf('%') != -1) return;
+        Skulls.getCustomSkull(fetchTextureUrl(texture));
+    }
+
     public static class Serializer implements NodeSerializer<PropTexture> {
 
         @Override

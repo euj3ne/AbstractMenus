@@ -8,20 +8,36 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import ru.abstractmenus.api.Logger;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class Skulls {
+
+    private static final Map<String, ItemStack> skullCache = new ConcurrentHashMap<>();
 
     private Skulls() {
     }
 
+    public static void clearCache() {
+        skullCache.clear();
+    }
+
     public static ItemStack getCustomSkull(String texture) {
+        ItemStack cached = skullCache.get(texture);
+        if (cached != null) return cached.clone();
+
         UUID uuid = UUID.nameUUIDFromBytes(("Skull:" + texture).getBytes());
 
         PlayerProfile profile = Bukkit.createProfile(uuid);
         profile.setProperty(new ProfileProperty("textures", texture));
 
-        return getCustomSkull(profile);
+        ItemStack result = getCustomSkull(profile);
+        if (result != null) {
+            skullCache.put(texture, result);
+            return result.clone();
+        }
+        return result;
     }
 
     public static ItemStack getCustomSkull(com.destroystokyo.paper.profile.PlayerProfile profile) {

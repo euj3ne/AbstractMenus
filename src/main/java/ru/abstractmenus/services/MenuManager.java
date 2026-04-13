@@ -16,10 +16,14 @@ import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.ConfigurationLoader;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.source.ConfigSources;
+import ru.abstractmenus.api.inventory.Item;
+import ru.abstractmenus.api.inventory.ItemProperty;
+import ru.abstractmenus.data.properties.PropTexture;
 import ru.abstractmenus.menu.AbstractMenu;
 import ru.abstractmenus.util.FileUtils;
 import ru.abstractmenus.api.Logger;
 import ru.abstractmenus.util.NMS;
+import ru.abstractmenus.util.bukkit.Skulls;
 import ru.abstractmenus.util.bukkit.BukkitTasks;
 import ru.abstractmenus.util.bukkit.TaskHandle;
 
@@ -92,10 +96,10 @@ public final class MenuManager {
         Menu cloned = menu.clone();
 
         if (cloned != null) {
-            if (cloned instanceof AbstractMenu) {
-                ((AbstractMenu) cloned).setActivatedBy(activator);
-                ((AbstractMenu) cloned).setContext(ctx);
-                ((AbstractMenu) cloned).setOpenListener(this::setOpenedMenu);
+            if (cloned instanceof AbstractMenu am) {
+                am.setActivatedBy(activator);
+                am.setContext(ctx);
+                am.setOpenListener(this::setOpenedMenu);
             }
 
             try {
@@ -163,7 +167,29 @@ public final class MenuManager {
         } catch (Throwable ignore) {
         }
 
+        warmupSkulls();
+
         Logger.info(String.format("Loaded %d menus", menusCount));
+    }
+
+    private void warmupSkulls() {
+        int count = 0;
+        for (Menu menu : menus.values()) {
+            Collection<Item> items = menu.getItems();
+            if (items == null) continue;
+            for (Item item : items) {
+                if (item == null) continue;
+                for (ItemProperty itemProperty : item.getProperties().values()) {
+                    if (itemProperty instanceof PropTexture propTexture) {
+                        propTexture.warmup();
+                        count++;
+                    }
+                }
+            }
+        }
+        if (count > 0) {
+            Logger.info("Warmed up " + count + " skull textures");
+        }
     }
 
     // TODO Rewrite this shit
@@ -227,16 +253,7 @@ public final class MenuManager {
 
     public boolean serve() throws IOException {
         if (watcher != null) {
-            watcher.close();
-
-            try {
-                watcherThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            watcher = null;
-            watcherThread = null;
+            stopWatcher();
             return false;
         } else {
             watcher = FileSystems.getDefault().newWatchService();
@@ -263,26 +280,48 @@ public final class MenuManager {
 
                         if (Files.isRegularFile(file) && System.currentTimeMillis() > lastUpdated + 100) {
                             Logger.info("Detected changes in " + filename + ". Loading ...");
-                            loadFile(file);
+                            // Bukkit API / menu map mutation must happen on main thread.
+                            BukkitTasks.runTask(() -> loadFile(file));
                             lastUpdated = System.currentTimeMillis();
                         }
                     }
 
                     if (!key.reset()) break;
                 }
-            });
+            }, "AbstractMenus-MenuWatcher");
+            watcherThread.setDaemon(true);
             watcherThread.start();
             return true;
         }
     }
 
+    private void stopWatcher() {
+        if (watcher == null) return;
+        try {
+            watcher.close();
+        } catch (IOException e) {
+            Logger.warning("Failed to close menu watcher: " + e.getMessage());
+        }
+        if (watcherThread != null) {
+            try {
+                watcherThread.join(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        watcher = null;
+        watcherThread = null;
+    }
+
     public void unloadAll() {
+        stopWatcher();
         unregisterActivators();
         Bukkit.getOnlinePlayers().forEach(this::closeMenu);
         stopUpdateTask();
         menus.clear();
         openedMenus.clear();
         inputActions.clear();
+        Skulls.clearCache();
     }
 
     private void unregisterActivators() {

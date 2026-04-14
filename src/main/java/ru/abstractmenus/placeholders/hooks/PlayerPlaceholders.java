@@ -8,26 +8,18 @@ public class PlayerPlaceholders implements PlaceholderHook {
     @Override
     public String replace(String placeholder, Player player) {
         if(player != null){
-            switch (placeholder){
-                default:
-                    return null;
-                case "name":
-                    return player.getName();
-                case "display_name":
-                    return player.getDisplayName();
-                case "level":
-                    return String.valueOf(player.getLevel());
-                case "xp":
-                    return String.valueOf(player.getExp());
-                case "location":
-                    return player.getLocation().getX() + ", " + player.getLocation().getY() + ", " + player.getLocation().getZ();
-                case "uuid":
-                    return player.getUniqueId().toString();
-                case "gm":
-                    return player.getGameMode().toString();
-                case "world":
-                    return player.getWorld().getName();
-            }
+            return switch (placeholder) {
+                case "name" -> player.getName();
+                case "display_name" -> player.getDisplayName();
+                case "level" -> String.valueOf(player.getLevel());
+                case "xp" -> String.valueOf(player.getExp());
+                case "location" ->
+                        player.getLocation().getX() + ", " + player.getLocation().getY() + ", " + player.getLocation().getZ();
+                case "uuid" -> player.getUniqueId().toString();
+                case "gm" -> player.getGameMode().toString();
+                case "world" -> player.getWorld().getName();
+                default -> null;
+            };
         }
 
         return null;

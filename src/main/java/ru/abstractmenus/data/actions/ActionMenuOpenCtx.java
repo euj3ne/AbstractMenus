@@ -25,7 +25,7 @@ public class ActionMenuOpenCtx implements Action {
         String name = Handlers.getPlaceholderHandler().replace(player, this.menu);
         Menu menuToOpen = MenuManager.instance().getMenu(name);
 
-        if(menuToOpen != null) {
+        if (menuToOpen != null) {
             Menu current = MenuManager.instance().getOpenedMenu(player);
 
             if (current == null) {

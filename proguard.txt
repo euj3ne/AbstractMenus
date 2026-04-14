@@ -15,8 +15,6 @@
 -keep class ru.abstractmenus.api.**{*;}
 -keep class ru.abstractmenus.hocon.api.**{*;}
 
--keep class com.mojang.authlib.properties.PropertyMap {*;}
-
 -keepclassmembers public class ru.abstractmenus.AbstractMenus{
     private <fields>;
 }

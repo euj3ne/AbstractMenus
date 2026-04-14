@@ -14,6 +14,7 @@ import java.util.Map;
 public class VariablesDao {
 
     private final VariableManager varManager;
+    private final Object connectionLock = new Object();
     private Connection connection;
 
     public VariablesDao(VariableManager varManager) {
@@ -37,6 +38,7 @@ public class VariablesDao {
     }
 
     public void cacheAll(Map<String, Var> cache) {
+        synchronized (connectionLock) {
         try (Statement statement = connection.createStatement()) {
             ResultSet rs = statement.executeQuery("SELECT * FROM variables");
 
@@ -62,28 +64,33 @@ public class VariablesDao {
             Logger.severe("Cannot create statement:");
             e.printStackTrace();
         }
+        }
     }
 
     private void executeUpdate(String sql, Object... values) {
         BukkitTasks.runTaskAsync(() -> {
-            try (PreparedStatement statement = connection.prepareStatement(sql)){
-                for (int i = 0; i < values.length; i++) {
-                    statement.setObject(i+1, values[i]);
+            synchronized (connectionLock) {
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    for (int i = 0; i < values.length; i++) {
+                        statement.setObject(i + 1, values[i]);
+                    }
+                    statement.executeUpdate();
+                } catch (SQLException e) {
+                    Logger.severe("Cannot create prepared statement:");
+                    e.printStackTrace();
                 }
-                statement.executeUpdate();
-            } catch (SQLException e) {
-                Logger.severe("Cannot create prepared statement:");
-                e.printStackTrace();
             }
         });
     }
 
     private void execute(String sql) {
-        try (Statement statement = connection.createStatement()){
-            statement.execute(sql);
-        } catch (SQLException e) {
-            Logger.severe("Cannot create statement:");
-            e.printStackTrace();
+        synchronized (connectionLock) {
+            try (Statement statement = connection.createStatement()) {
+                statement.execute(sql);
+            } catch (SQLException e) {
+                Logger.severe("Cannot create statement:");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -111,6 +118,7 @@ public class VariablesDao {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
             }
-        } catch (Throwable ignore) {}
+        } catch (Throwable ignore) {
+        }
     }
 }

@@ -14,28 +14,31 @@ import ru.abstractmenus.api.Action;
 import ru.abstractmenus.api.Logger;
 
 import java.util.List;
+import java.util.Map;
 
 public class ActionItemAdd implements Action {
 
     private final List<Item> items;
 
-    private ActionItemAdd(List<Item> items){
+    private ActionItemAdd(List<Item> items) {
         this.items = items;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        for(Item item : items){
+        for (Item item : items) {
             try {
-                if(item instanceof InventoryItem) {
-                    Slot slot = ((InventoryItem)item).getSlot(player, menu);
-                    ItemStack built = item.build(player, menu);
-                    slot.getSlots((s)->player.getInventory().setItem(s, built));
-                    continue;
+                ItemStack built = item.build(player, menu);
+
+                Map<Integer, ItemStack> notAdded = player.getInventory().addItem(built);
+
+                if (!notAdded.isEmpty()) {
+                    for (ItemStack itemStack : notAdded.values()) {
+                        player.getWorld().dropItem(player.getLocation(), itemStack);
+                    }
                 }
 
-                player.getInventory().addItem(item.build(player, menu));
-            } catch (Exception e){
+            } catch (Exception e) {
                 Logger.severe("Cannot add item in player inventory: " + e.getMessage());
             }
         }
@@ -47,6 +50,5 @@ public class ActionItemAdd implements Action {
         public ActionItemAdd deserialize(Class type, ConfigNode node) throws NodeSerializeException {
             return new ActionItemAdd(node.getList(Item.class));
         }
-
     }
 }

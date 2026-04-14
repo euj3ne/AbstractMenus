@@ -15,7 +15,7 @@ public class ActionLevelTake implements Action {
 
     private final TypeInt level;
 
-    private ActionLevelTake(TypeInt level){
+    private ActionLevelTake(TypeInt level) {
         this.level = level;
     }
 

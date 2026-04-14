@@ -1,5 +1,6 @@
 package ru.abstractmenus.data.activators;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
@@ -20,18 +21,18 @@ public class OpenChat extends Activator {
     }
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent event) {
+    public void onChat(AsyncChatEvent event) {
         for (String str : messages) {
             String replaced = Handlers.getPlaceholderHandler().replace(event.getPlayer(), str);
 
-            if (event.getMessage().equalsIgnoreCase(replaced)){
-                BukkitTasks.runTask(()->openMenu(null, event.getPlayer()));
+            if (event.signedMessage().message().equalsIgnoreCase(replaced)) {
+                BukkitTasks.runTask(() -> openMenu(null, event.getPlayer()));
                 return;
             }
         }
     }
 
-    public static class Serializer implements NodeSerializer<OpenChat>{
+    public static class Serializer implements NodeSerializer<OpenChat> {
 
         @Override
         public OpenChat deserialize(Class type, ConfigNode node) throws NodeSerializeException {

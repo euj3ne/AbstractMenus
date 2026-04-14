@@ -22,8 +22,8 @@ public class ActionVarpMul implements Action {
         this.dataList = dataList;
     }
 
-    public void activate(Player p, Menu menu, Item clickedItem){
-        for (VarNumData data : dataList){
+    public void activate(Player p, Menu menu, Item clickedItem) {
+        for (VarNumData data : dataList) {
             String varName = Handlers.getPlaceholderHandler().replace(p, data.getName());
             double value = data.getValue().getDouble(p, menu);
             Function<Double, Double> func = num -> num * value;

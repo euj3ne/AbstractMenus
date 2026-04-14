@@ -23,8 +23,8 @@ public class ActionButtonSet implements Action {
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
         for (Item item : items) {
-            if (item instanceof InventoryItem) {
-                Slot slot = ((InventoryItem)item).getSlot(player, menu);
+            if (item instanceof InventoryItem inventoryItem) {
+                Slot slot = inventoryItem.getSlot(player, menu);
                 menu.setItem(slot, item, player);
             }
         }

@@ -14,13 +14,13 @@ public class PermissionDefaultHandler implements PermissionsHandler {
     private final Plugin plugin;
     private final Map<UUID, PermissionAttachment> attachments = new HashMap<>();
 
-    public PermissionDefaultHandler(Plugin plugin){
+    public PermissionDefaultHandler(Plugin plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public void addPermission(Player player, String permission) {
-        if(!attachments.containsKey(player.getUniqueId())){
+        if (!attachments.containsKey(player.getUniqueId())) {
             attachments.put(player.getUniqueId(), player.addAttachment(plugin));
         }
 
@@ -31,7 +31,7 @@ public class PermissionDefaultHandler implements PermissionsHandler {
     public void removePermission(Player player, String permission) {
         PermissionAttachment attachment = attachments.get(player.getUniqueId());
 
-        if(attachment != null){
+        if (attachment != null) {
             attachment.unsetPermission(permission);
         }
     }

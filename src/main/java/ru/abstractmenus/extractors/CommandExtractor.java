@@ -18,8 +18,10 @@ public class CommandExtractor implements ValueExtractor {
             }
 
             switch (placeholder) {
-                case "cmd_name": return ctx.getCommand().getName();
-                case "cmd_args": return String.valueOf(ctx.args());
+                case "cmd_name":
+                    return ctx.getCommand().getName();
+                case "cmd_args":
+                    return String.valueOf(ctx.args());
             }
 
             String[] args = placeholder.split(":", 2);

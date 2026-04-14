@@ -11,7 +11,8 @@ public class VarBuilderImpl implements VarBuilder {
     private String value;
     private long expiry;
 
-    VarBuilderImpl() { }
+    VarBuilderImpl() {
+    }
 
     VarBuilderImpl(Var var) {
         this.name = var.name();

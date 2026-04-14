@@ -1,5 +1,6 @@
 package ru.abstractmenus.command;
 
+import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -8,15 +9,12 @@ import java.util.Map;
 
 public class CommandContext {
 
+    @Getter
     private final Command command;
     private final Map<String, Object> args = new HashMap<>();
 
     public CommandContext(Command command) {
         this.command = command;
-    }
-
-    public Command getCommand() {
-        return command;
     }
 
     public Collection<Object> values() {

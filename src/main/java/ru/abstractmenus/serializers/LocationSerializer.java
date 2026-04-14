@@ -12,8 +12,8 @@ public class LocationSerializer implements NodeSerializer<Location> {
 
     @Override
     public Location deserialize(Class<Location> type, ConfigNode node) throws NodeSerializeException {
-        if(!node.isMap()) {
-            if(node.getString() != null) {
+        if (!node.isMap()) {
+            if (node.getString() != null) {
                 return parseString(node, node.getString());
             }
 
@@ -31,19 +31,19 @@ public class LocationSerializer implements NodeSerializer<Location> {
         float yaw = 0.0f;
         float pitch = 0.0f;
 
-        if(node.node("world").rawValue() != null){
+        if (node.node("world").rawValue() != null) {
             world = node.node("world").getValue(World.class);
 
-            if(world == null){
-                throw new NodeSerializeException(node.node("world"), "Error while parsing location in node " + node.parent().key() + ". World '"+node.node("world").getString()+"' not exists");
+            if (world == null) {
+                throw new NodeSerializeException(node.node("world"), "Error while parsing location in node " + node.parent().key() + ". World '" + node.node("world").getString() + "' not exists");
             }
         }
 
-        if(node.node("yaw").rawValue() != null){
+        if (node.node("yaw").rawValue() != null) {
             yaw = node.node("yaw").getFloat();
         }
 
-        if(node.node("pitch").rawValue() != null){
+        if (node.node("pitch").rawValue() != null) {
             pitch = node.node("pitch").getFloat();
         }
 
@@ -60,24 +60,24 @@ public class LocationSerializer implements NodeSerializer<Location> {
 
         String[] args = str.split(",");
 
-        if(args.length < 3){
+        if (args.length < 3) {
             throw new NodeSerializeException(node, "Error while parsing location. Minimal arguments count: 3 (x,y,z)");
         }
 
-        if(args.length == 3){
+        if (args.length == 3) {
             x = Double.parseDouble(args[0].trim());
             y = Double.parseDouble(args[1].trim());
             z = Double.parseDouble(args[2].trim());
         }
 
-        if(args.length == 4){
+        if (args.length == 4) {
             world = Bukkit.getWorld(args[0].trim());
             x = Double.parseDouble(args[1].trim());
             y = Double.parseDouble(args[2].trim());
             z = Double.parseDouble(args[3].trim());
         }
 
-        if(args.length == 6){
+        if (args.length == 6) {
             world = Bukkit.getWorld(args[0].trim());
             x = Double.parseDouble(args[1].trim());
             y = Double.parseDouble(args[2].trim());

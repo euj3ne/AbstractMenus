@@ -49,7 +49,7 @@ public class BaseMenuSerializer implements NodeSerializer<Menu> {
             // Frames defined. This is an animated menu
             menu = animatedMenuSerializer.deserialize(node, title, size);
             MenuManager.instance().startUpdateTask();
-        } else if(node.node("catalog").rawValue() != null){
+        } else if (node.node("catalog").rawValue() != null) {
             // Catalog defined. This is a template menu
             menu = generatedMenuSerializer.deserialize(node, title, size);
         } else {
@@ -128,14 +128,14 @@ public class BaseMenuSerializer implements NodeSerializer<Menu> {
         List<Activator> list = new ArrayList<>();
         Map<String, ConfigNode> activators = node.childrenMap();
 
-        for(Map.Entry<String, ConfigNode> entry : activators.entrySet()) {
+        for (Map.Entry<String, ConfigNode> entry : activators.entrySet()) {
             String key = entry.getKey();
             Class<? extends Activator> type = Types.getActivator(key);
 
-            if(type != null) {
+            if (type != null) {
                 Activator activator = entry.getValue().getValue(type);
                 list.add(activator);
-            } else{
+            } else {
                 throw new NodeSerializeException(entry.getValue(), "Error while serializing activator " + key);
             }
         }

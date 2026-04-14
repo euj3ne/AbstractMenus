@@ -9,11 +9,12 @@ import java.util.stream.Collectors;
 
 public final class FileUtils {
 
-    private FileUtils(){}
+    private FileUtils() {
+    }
 
-    public static String getExtension(String name){
-        String[] arr = name.split("\\.");
-        return (arr.length > 0) ? arr[arr.length-1] : null;
+    public static String getExtension(String name) {
+        int idx = name.lastIndexOf('.');
+        return (idx != -1) ? name.substring(idx + 1) : null;
     }
 
     public static int indexOfLastSeparator(String filename) {
@@ -74,7 +75,7 @@ public final class FileUtils {
     private static void failIfNullBytePresent(String path) {
         int len = path.length();
 
-        for(int i = 0; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             if (path.charAt(i) == 0) {
                 throw new IllegalArgumentException("Null byte present in file/path name. There are no known legitimate use cases for such data, but several injection attacks may use it");
             }

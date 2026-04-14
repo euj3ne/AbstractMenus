@@ -17,15 +17,15 @@ public class ActionPotionEffectRemove implements Action {
 
     private List<PotionEffectType> types;
 
-    private void setTypes(List<PotionEffectType> types){
+    private void setTypes(List<PotionEffectType> types) {
         this.types = types;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if(types != null){
-            for(PotionEffectType type : types){
-                if(type != null){
+        if (types != null) {
+            for (PotionEffectType type : types) {
+                if (type != null) {
                     player.removePotionEffect(type);
                 }
             }
@@ -40,7 +40,7 @@ public class ActionPotionEffectRemove implements Action {
             List<String> list = node.getList(String.class);
             List<PotionEffectType> types = new ArrayList<>();
 
-            for(String name : list){
+            for (String name : list) {
                 types.add(PotionEffectType.getByName(name));
             }
 

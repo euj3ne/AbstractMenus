@@ -18,7 +18,7 @@ public class VarpSet extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(args.length >= 2){
+        if (args.length >= 2) {
             String player = args[0];
             String name = args[1];
             String value = args[2];
@@ -28,34 +28,34 @@ public class VarpSet extends Command {
                     .value(value)
                     .build();
 
-            if(args.length == 3){
+            if (args.length == 3) {
                 // just set var
                 VariableManagerImpl.instance().savePersonal(player, var);
-                sender.sendMessage(Colors.of("&aSuccessfully set value '"+value+"' to personal "+player+" variable '"+name+"'"));
+                sender.sendMessage(Colors.of("&aSuccessfully set value '" + value + "' to personal " + player + " variable '" + name + "'"));
                 return;
             }
-            if(args.length == 4){
-                if(args[3].equals("true") || args[3].equals("false")){
+            if (args.length == 4) {
+                if (args[3].equals("true") || args[3].equals("false")) {
                     // set replace var
                     boolean replace = Boolean.parseBoolean(args[3]);
                     VariableManagerImpl.instance().savePersonal(player, var, replace);
-                    sender.sendMessage(Colors.of("&aSuccessfully set value '"+value+"' to personal "+player+" variable '"+name+"' (replace="+replace+")"));
+                    sender.sendMessage(Colors.of("&aSuccessfully set value '" + value + "' to personal " + player + " variable '" + name + "' (replace=" + replace + ")"));
                     return;
                 }
                 // set time var
-                try{
+                try {
                     long time = TimeUtil.parseTime(args[3]);
                     var = var.toBuilder()
                             .expiry(System.currentTimeMillis() + time)
                             .build();
                     VariableManagerImpl.instance().savePersonal(player, var);
-                    sender.sendMessage(Colors.of("&aSuccessfully set value '"+value+"' to personal "+player+" temporary variable '"+name+"'"));
-                } catch (Exception e){
+                    sender.sendMessage(Colors.of("&aSuccessfully set value '" + value + "' to personal " + player + " temporary variable '" + name + "'"));
+                } catch (Exception e) {
                     sender.sendMessage(Colors.of("&cInvalid time format!"));
                 }
                 return;
             }
-            if(args.length == 5){
+            if (args.length == 5) {
                 // set time replace var
                 try {
                     long time = TimeUtil.parseTime(args[2]);
@@ -64,8 +64,8 @@ public class VarpSet extends Command {
                             .expiry(System.currentTimeMillis() + time)
                             .build();
                     VariableManagerImpl.instance().savePersonal(player, var, replace);
-                    sender.sendMessage(Colors.of("&aSuccessfully set value '"+value+"' to personal "+player+" temporary variable '"+name+"'"));
-                } catch (Exception e){
+                    sender.sendMessage(Colors.of("&aSuccessfully set value '" + value + "' to personal " + player + " temporary variable '" + name + "'"));
+                } catch (Exception e) {
                     sender.sendMessage(Colors.of("&cInvalid time format!"));
                 }
                 return;

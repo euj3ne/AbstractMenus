@@ -16,12 +16,12 @@ public class NPCExtractor implements ValueExtractor {
                 return EntityExtractor.INSTANCE.extract(npc.getBukkitEntity(), placeholder.substring(4));
             }
 
-            switch (placeholder) {
-                default: return null;
-                case "npc_id": return String.valueOf(npc.getId());
-                case "npc_name": return npc.getName();
-                case "npc_full_name": return npc.getFullName();
-            }
+            return switch (placeholder) {
+                default -> null;
+                case "npc_id" -> String.valueOf(npc.getId());
+                case "npc_name" -> npc.getName();
+                case "npc_full_name" -> npc.getFullName();
+            };
         }
         return "";
     }

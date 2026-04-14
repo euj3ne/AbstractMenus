@@ -28,8 +28,7 @@ public class WgRegionHandler extends Handler {
 
     @Override
     public boolean onCrossBoundary(LocalPlayer localPlayer, Location from, Location to, ApplicableRegionSet toSet,
-                                   Set<ProtectedRegion> entered, Set<ProtectedRegion> exited, MoveType moveType)
-    {
+                                   Set<ProtectedRegion> entered, Set<ProtectedRegion> exited, MoveType moveType) {
         Player player = BukkitAdapter.adapt(localPlayer);
 
         if (player != null) {

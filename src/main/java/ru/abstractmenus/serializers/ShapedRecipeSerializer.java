@@ -18,7 +18,7 @@ public class ShapedRecipeSerializer implements NodeSerializer<ShapedRecipe> {
 
     private final Plugin plugin;
 
-    public ShapedRecipeSerializer(Plugin plugin){
+    public ShapedRecipeSerializer(Plugin plugin) {
         this.plugin = plugin;
     }
 
@@ -42,7 +42,7 @@ public class ShapedRecipeSerializer implements NodeSerializer<ShapedRecipe> {
 
         try {
             Bukkit.addRecipe(recipe);
-        } catch (Exception e){
+        } catch (Exception e) {
             /* Recipe already registered. Ignore */
         }
 

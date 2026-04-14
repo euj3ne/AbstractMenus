@@ -13,14 +13,14 @@ public class OpenJoin extends Activator {
 
     private final boolean open;
 
-    private OpenJoin(boolean value){
+    private OpenJoin(boolean value) {
         this.open = value;
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event){
-        if(open){
-            BukkitTasks.runTaskLater(()->openMenu(null, event.getPlayer()), 20L);
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        if (open) {
+            BukkitTasks.runTaskLater(() -> openMenu(null, event.getPlayer()), 20L);
         }
     }
 

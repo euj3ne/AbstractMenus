@@ -1,5 +1,6 @@
 package ru.abstractmenus.data.activators;
 
+import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,6 +19,7 @@ import ru.abstractmenus.extractors.CommandExtractor;
 
 import java.util.Arrays;
 
+@Getter
 public class OpenCommand extends Activator {
 
     private final Command command;
@@ -27,10 +29,6 @@ public class OpenCommand extends Activator {
         command.setPlayerOnly(true);
         command.setHandler(new Handler(this));
         AbstractMenus.instance().getCommandManager().register(command);
-    }
-
-    public Command getCommand() {
-        return command;
     }
 
     @Override
@@ -67,27 +65,20 @@ public class OpenCommand extends Activator {
         }
     }
 
-    private static class Handler implements CommandHandler {
-
-        private final OpenCommand activator;
-
-        public Handler(OpenCommand activator) {
-            this.activator = activator;
-        }
+    private record Handler(OpenCommand activator) implements CommandHandler {
 
         @Override
-        public void handle(CommandSender sender, CommandContext ctx) {
-            if (sender instanceof Player) {
-                activator.openMenu(ctx, (Player) sender);
+            public void handle(CommandSender sender, CommandContext ctx) {
+                if (sender instanceof Player player) {
+                    activator.openMenu(ctx, player);
+                }
             }
         }
-    }
 
-    public static class Serializer implements NodeSerializer<OpenCommand>{
+    public static class Serializer implements NodeSerializer<OpenCommand> {
         @Override
         public OpenCommand deserialize(Class type, ConfigNode node) throws NodeSerializeException {
             return new OpenCommand(node.getValue(Command.class));
         }
     }
-
 }

@@ -15,7 +15,7 @@ public class ActionXpGive implements Action {
 
     private final TypeInt xp;
 
-    private ActionXpGive(TypeInt xp){
+    private ActionXpGive(TypeInt xp) {
         this.xp = xp;
     }
 

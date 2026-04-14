@@ -41,10 +41,10 @@ public class ActionSoundCustom implements Action {
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if(sound != null) {
+        if (sound != null) {
             Location loc = (location != null) ? location.getLocation(player, menu) : player.getLocation();
 
-            if(isPublic.getBool(player, menu) && loc.getWorld() != null) {
+            if (isPublic.getBool(player, menu) && loc.getWorld() != null) {
                 loc.getWorld().playSound(loc,
                         sound,
                         category.getEnum(SoundCategory.class, player, menu),
@@ -89,26 +89,26 @@ public class ActionSoundCustom implements Action {
 
                     try {
                         category = new TypeEnum<>(SoundCategory.valueOf(name));
-                    } catch (IllegalArgumentException e1){
+                    } catch (IllegalArgumentException e1) {
                         if (!StringUtil.contains(name, '%'))
-                            throw new NodeSerializeException(node, "Cannot read sound category with sound name '"+name+"'. Invalid category name.");
+                            throw new NodeSerializeException(node, "Cannot read sound category with sound name '" + name + "'. Invalid category name.");
                         category = new TypeEnum<>(name);
                     }
                 }
 
-                if(node.node("volume").rawValue() != null){
+                if (node.node("volume").rawValue() != null) {
                     volume = node.node("volume").getValue(TypeFloat.class);
                 }
 
-                if(node.node("pitch").rawValue() != null){
+                if (node.node("pitch").rawValue() != null) {
                     pitch = node.node("pitch").getValue(TypeFloat.class);
                 }
 
-                if(node.node("public").rawValue() != null){
+                if (node.node("public").rawValue() != null) {
                     isPublic = node.node("public").getValue(TypeBool.class);
                 }
 
-                if(node.node("location").rawValue() != null){
+                if (node.node("location").rawValue() != null) {
                     location = node.node("location").getValue(TypeLocation.class);
                 }
 

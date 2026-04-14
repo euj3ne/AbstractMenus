@@ -9,7 +9,7 @@ public class HeadAnimPlaceholders implements PlaceholderHook {
     @Override
     public String replace(String placeholder, Player player) {
         String[] arr = placeholder.split(":");
-        if(arr.length == 3) {
+        if (arr.length == 3) {
             return HeadAnimManager.instance().getNextFrame(arr[1], arr[2]);
         }
         return null;

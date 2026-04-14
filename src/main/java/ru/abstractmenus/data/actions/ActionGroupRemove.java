@@ -13,7 +13,7 @@ public class ActionGroupRemove implements Action {
 
     private final String group;
 
-    private ActionGroupRemove(String group){
+    private ActionGroupRemove(String group) {
         this.group = group;
     }
 

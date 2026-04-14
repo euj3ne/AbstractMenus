@@ -10,7 +10,8 @@ import ru.abstractmenus.data.actions.wrappers.ActionRandomActions;
 
 public final class MenuActions {
 
-    private MenuActions(){}
+    private MenuActions() {
+    }
 
     public static void init() {
         Types.registerAction("closeMenu", ActionMenuClose.class, new ActionMenuClose.Serializer());
@@ -46,7 +47,8 @@ public final class MenuActions {
         try {
             // SoundCategory missing on legacy Bukkit
             Types.registerAction("customSound", ActionSoundCustom.class, new ActionSoundCustom.Serializer());
-        } catch (Throwable ignore) {}
+        } catch (Throwable ignore) {
+        }
 
         Types.registerAction("takeLevel", ActionLevelTake.class, new ActionLevelTake.Serializer());
         Types.registerAction("takeMoney", ActionMoneyTake.class, new ActionMoneyTake.Serializer());

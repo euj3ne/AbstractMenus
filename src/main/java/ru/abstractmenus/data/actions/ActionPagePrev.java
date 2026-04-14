@@ -14,14 +14,13 @@ public class ActionPagePrev implements Action {
 
     private final TypeInt skip;
 
-    private ActionPagePrev(TypeInt skip){
+    private ActionPagePrev(TypeInt skip) {
         this.skip = skip;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if (menu instanceof GeneratedMenu){
-            GeneratedMenu tmpl = (GeneratedMenu) menu;
+        if (menu instanceof GeneratedMenu tmpl) {
             int skip = this.skip.getInt(player, menu);
             tmpl.prevPage(player, skip);
         }

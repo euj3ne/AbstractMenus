@@ -1,6 +1,9 @@
 package ru.abstractmenus.menu.animated;
 
 
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Material;
 import ru.abstractmenus.data.Actions;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
@@ -23,86 +26,65 @@ import java.util.Map;
 
 public class Frame {
 
+    @Getter
     private final long delay;
+    @Getter
     private final boolean clear;
 
+    @Setter
     private Rule rules;
+    @Setter
+    @Getter
     private Actions startActions;
+    @Setter
+    @Getter
     private Actions endActions;
 
+    @Setter
+    @Getter
     private List<Item> items;
 
-    private Frame(long delay, boolean clear){
+    private Frame(long delay, boolean clear) {
         this.delay = delay;
         this.clear = clear;
     }
 
-    public Map<Integer, Item> play(Player player, Menu menu){
-        if(items != null && !items.isEmpty()){
-            if(rules != null && !rules.check(player, menu, null)) return null;
+    /**
+     * Output of {@link #play(Player, Menu)} per slot — pairs the menu Item (used
+     * for the click registry) with the already-built ItemStack (placed straight
+     * into the inventory). Carrying both lets AnimatedMenu skip a second
+     * {@code item.build(...)} pass, which used to double the work for every
+     * animation frame.
+     */
+    public record PlayedSlot(Item item, ItemStack stack) {}
 
-            Map<Integer, Item> allowedItems = new HashMap<>();
+    public Map<Integer, PlayedSlot> play(Player player, Menu menu) {
+        if (items == null || items.isEmpty()) return null;
+        if (rules != null && !rules.check(player, menu, null)) return null;
 
-            for(Item i : items){
-                if(i != null){
-                    Item item = i.clone();
+        Map<Integer, PlayedSlot> allowedItems = new HashMap<>();
 
-                    if(item instanceof MenuItem && !((MenuItem) item).checkShowRules(player, menu)) continue;
+        for (Item i : items) {
+            if (i == null) continue;
+            Item item = i.clone();
 
-                    try{
-                        if(item instanceof InventoryItem){
-                            ItemStack built = item.build(player, menu);
-                            if (built.getAmount() > 0){
-                                Slot slot = ((InventoryItem) item).getSlot(player, menu);
-                                slot.getSlots((s)->allowedItems.put(s, item));
-                            }
-                        }
-                    } catch (Exception e){
-                        Logger.severe("Cannot play frame in animated menu: " + e.getMessage());
-                    }
+            if (item instanceof MenuItem && !((MenuItem) item).checkShowRules(player, menu)) continue;
+            if (!(item instanceof InventoryItem inventoryItem)) continue;
+
+            try {
+                ItemStack built = item.build(player, menu);
+                if (built == null) continue;
+                if (built.getAmount() > 0 || Material.AIR.equals(built.getType())) {
+                    Slot slot = inventoryItem.getSlot(player, menu);
+                    PlayedSlot played = new PlayedSlot(item, built);
+                    slot.getSlots((s) -> allowedItems.put(s, played));
                 }
+            } catch (Exception e) {
+                Logger.severe("Cannot play frame in animated menu: " + e.getMessage());
             }
-
-            return allowedItems;
         }
 
-        return null;
-    }
-
-    public long getDelay(){
-        return delay;
-    }
-
-    public boolean isClear(){
-        return clear;
-    }
-
-    public List<Item> getItems(){
-        return items;
-    }
-
-    public Actions getStartActions() {
-        return startActions;
-    }
-
-    public Actions getEndActions() {
-        return endActions;
-    }
-
-    public void setRules(Rule rules){
-        this.rules = rules;
-    }
-
-    public void setStartActions(Actions actions){
-        this.startActions = actions;
-    }
-
-    public void setEndActions(Actions actions){
-        this.endActions = actions;
-    }
-
-    public void setItems(List<Item> items){
-        this.items = items;
+        return allowedItems;
     }
 
     public static class Serializer implements NodeSerializer<Frame> {

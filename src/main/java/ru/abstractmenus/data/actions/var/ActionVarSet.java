@@ -23,7 +23,7 @@ public class ActionVarSet implements Action {
         this.dataList = dataList;
     }
 
-    public void activate(Player p, Menu menu, Item clickedItem){
+    public void activate(Player p, Menu menu, Item clickedItem) {
         for (VarData data : dataList) {
             String varName = Handlers.getPlaceholderHandler().replace(p, data.getName());
             String varVal = Handlers.getPlaceholderHandler().replace(p, data.getValue());
@@ -37,7 +37,7 @@ public class ActionVarSet implements Action {
                     .expiry((time > 0L) ? System.currentTimeMillis() + time : 0L)
                     .build();
 
-            if(data.getPlayer() == null) {
+            if (data.getPlayer() == null) {
                 VariableManagerImpl.instance().saveGlobal(var, replace);
             } else {
                 String playerName = Handlers.getPlaceholderHandler().replace(p, data.getPlayer());

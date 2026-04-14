@@ -7,10 +7,12 @@ import org.bukkit.plugin.Plugin;
 
 public final class WGHandlers {
 
-    private WGHandlers() { }
+    private WGHandlers() {
+    }
 
+    @SuppressWarnings("UnstableApiUsage")
     public static void initRegionListeners(Plugin plugin) {
-        String version = WorldGuardPlugin.inst().getDescription().getVersion();
+        String version = WorldGuardPlugin.inst().getPluginMeta().getVersion();
         int majorVer = Integer.parseInt(version.split("\\.")[0]);
 
         if (majorVer >= 7) {

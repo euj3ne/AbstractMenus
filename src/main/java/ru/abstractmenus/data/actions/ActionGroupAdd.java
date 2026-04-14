@@ -13,7 +13,7 @@ public class ActionGroupAdd implements Action {
 
     private final String group;
 
-    private ActionGroupAdd(String group){
+    private ActionGroupAdd(String group) {
         this.group = group;
     }
 

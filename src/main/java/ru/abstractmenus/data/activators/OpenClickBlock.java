@@ -24,9 +24,9 @@ public class OpenClickBlock extends Activator {
     public void onClickBlock(PlayerInteractEvent event) {
         if (!ActivatorUtil.checkHand(event)) return;
 
-        if(event.getClickedBlock() != null) {
+        if (event.getClickedBlock() != null) {
             for (TypeLocation loc : location) {
-                if(event.getClickedBlock().getLocation().equals(loc.getLocation(event.getPlayer(), null))) {
+                if (event.getClickedBlock().getLocation().equals(loc.getLocation(event.getPlayer(), null))) {
                     event.setCancelled(true);
                     openMenu(event.getClickedBlock(), event.getPlayer());
                     return;

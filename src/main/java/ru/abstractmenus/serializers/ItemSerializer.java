@@ -27,30 +27,30 @@ public class ItemSerializer implements NodeSerializer<Item> {
 
         // Parse menu item data
 
-        if(node.node("slot").rawValue() != null){
+        if (node.node("slot").rawValue() != null) {
             item = new InventoryItem();
-            ((InventoryItem)item).setSlot(node.node("slot").getValue(TypeSlot.class));
+            ((InventoryItem) item).setSlot(node.node("slot").getValue(TypeSlot.class));
         }
 
-        if(node.node("rules").rawValue() != null
+        if (node.node("rules").rawValue() != null
                 || node.node("mrules").rawValue() != null
-                || node.node("click").rawValue() != null){
+                || node.node("click").rawValue() != null) {
 
             MenuItem menuItem = new MenuItem();
 
-            if(node.node("slot").rawValue() != null){
+            if (node.node("slot").rawValue() != null) {
                 menuItem.setSlot(node.node("slot").getValue(TypeSlot.class));
             }
 
-            if(node.node("rules").rawValue() != null){
+            if (node.node("rules").rawValue() != null) {
                 menuItem.setShowRules(node.node("rules").getValue(RuleAnd.class));
             }
 
-            if(node.node("mrules").rawValue() != null){
+            if (node.node("mrules").rawValue() != null) {
                 menuItem.setMinorRules(node.node("mrules").getValue(RuleAnd.class));
             }
 
-            if(node.node("click").rawValue() != null){
+            if (node.node("click").rawValue() != null) {
                 menuItem.setClicks(getClicks(menuItem, node.node("click")));
             }
 
@@ -65,7 +65,7 @@ public class ItemSerializer implements NodeSerializer<Item> {
 
         Map<String, ConfigNode> children = node.childrenMap();
 
-        for (Map.Entry<String, ConfigNode> entry : children.entrySet()){
+        for (Map.Entry<String, ConfigNode> entry : children.entrySet()) {
             String key = entry.getKey();
             Class<? extends ItemProperty> token = Types.getItemPropertyType(key);
 
@@ -86,7 +86,7 @@ public class ItemSerializer implements NodeSerializer<Item> {
             String key = entry.getKey();
             ClickType clickType = getClickType(key);
 
-            if(clickType != null) {
+            if (clickType != null) {
                 Actions clickActions = entry.getValue().getValue(Actions.class);
                 map.put(clickType, clickActions);
                 continue;
@@ -112,10 +112,10 @@ public class ItemSerializer implements NodeSerializer<Item> {
         return map;
     }
 
-    private ClickType getClickType(String str){
-        try{
+    private ClickType getClickType(String str) {
+        try {
             return ClickType.valueOf(str.toUpperCase());
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }

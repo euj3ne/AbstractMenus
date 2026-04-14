@@ -29,8 +29,8 @@ public class TypeFloat extends DataType {
     public static class Serializer implements NodeSerializer<TypeFloat> {
 
         public TypeFloat deserialize(Class type, ConfigNode node) throws NodeSerializeException {
-            if(node.rawValue() instanceof Number) return new TypeFloat(node.getFloat());
-            if(!hasPlaceholder(node.getString("")))
+            if (node.rawValue() instanceof Number) return new TypeFloat(node.getFloat());
+            if (!hasPlaceholder(node.getString("")))
                 throw new NodeSerializeException(node, "Number type haven't placeholder to replace");
             return new TypeFloat(node.getString());
         }

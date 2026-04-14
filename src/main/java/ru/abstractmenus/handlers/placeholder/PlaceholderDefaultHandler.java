@@ -14,8 +14,9 @@ import java.util.regex.Pattern;
 
 public class PlaceholderDefaultHandler implements PlaceholderHandler {
 
+    private static final Pattern PATTERN = Pattern.compile("%(\\S+)%");
+
     private final Map<String, PlaceholderHook> hooks = new HashMap<>();
-    private final Pattern pattern = Pattern.compile("%(\\S+)%");
 
     @Override
     public String replacePlaceholder(Player player, String placeholder) {
@@ -24,33 +25,45 @@ public class PlaceholderDefaultHandler implements PlaceholderHandler {
 
     @Override
     public String replace(Player player, String str) {
-        if (player == null) return str;
+        if (player == null || str.indexOf('%') == -1) return str;
 
-        String result = str;
-        Matcher matcher = pattern.matcher(str);
+        Matcher matcher = PATTERN.matcher(str);
+        StringBuilder sb = null;
 
-        while(matcher.find()) {
+        while (matcher.find()) {
             String placeholder = matcher.group(1);
-            String[] arr = placeholder.split("_", 2);
+            int sep = placeholder.indexOf('_');
 
-            if (arr.length == 2) {
-                PlaceholderHook hook = hooks.get(arr[0]);
+            if (sep != -1) {
+                String hookName = placeholder.substring(0, sep);
+                PlaceholderHook hook = hooks.get(hookName);
 
                 if (hook != null) {
-                    String replaced = hook.replace(arr[1], player);
-                    result = replaced != null ? result.replace("%"+placeholder+"%", replaced) : result;
+                    String replaced = hook.replace(placeholder.substring(sep + 1), player);
+
+                    if (replaced != null) {
+                        if (sb == null) sb = new StringBuilder(str.length() + 32);
+                        matcher.appendReplacement(sb, Matcher.quoteReplacement(replaced));
+                        continue;
+                    }
                 }
+            }
+
+            if (sb != null) {
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group()));
             }
         }
 
-        return result;
+        if (sb == null) return str;
+        matcher.appendTail(sb);
+        return sb.toString();
     }
 
     @Override
     public List<String> replace(Player player, List<String> list) {
         List<String> result = new ArrayList<>();
 
-        for (String line : list){
+        for (String line : list) {
             result.add(replace(player, line));
         }
 

@@ -15,17 +15,17 @@ public class ActionRecipeAdd implements Action {
 
     private final List<ShapedRecipe> recipes;
 
-    private ActionRecipeAdd(List<ShapedRecipe> recipes){
+    private ActionRecipeAdd(List<ShapedRecipe> recipes) {
         this.recipes = recipes;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        try{
-            for (ShapedRecipe recipe : recipes){
+        try {
+            for (ShapedRecipe recipe : recipes) {
                 player.discoverRecipe(recipe.getKey());
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             /* Ignore */
         }
     }

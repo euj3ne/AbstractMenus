@@ -11,5 +11,5 @@ public class WorldSerializer implements NodeSerializer<World> {
     public World deserialize(Class<World> type, ConfigNode node) {
         return Bukkit.getWorld(node.getString());
     }
-    
+
 }

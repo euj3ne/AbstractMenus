@@ -18,35 +18,35 @@ public class ActionMenuRefresh implements Action {
     private TypeBool isRefresh;
     private TypeInt ticks;
 
-    private ActionMenuRefresh(TypeBool value){
+    private ActionMenuRefresh(TypeBool value) {
         this.isRefresh = value;
     }
 
-    private ActionMenuRefresh(TypeInt ticks){
+    private ActionMenuRefresh(TypeInt ticks) {
         this.ticks = ticks;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if(ticks != null){
-            BukkitTasks.runTaskLater(()-> MenuManager.instance().refreshMenu(player), ticks.getInt(player, menu));
+        if (ticks != null) {
+            BukkitTasks.runTaskLater(() -> MenuManager.instance().refreshMenu(player), ticks.getInt(player, menu));
             return;
         }
 
         boolean isRefresh = this.isRefresh.getBool(player, menu);
 
-        if(isRefresh){
+        if (isRefresh) {
             MenuManager.instance().refreshMenu(player);
         }
     }
 
-    public static class Serializer implements NodeSerializer<ActionMenuRefresh>{
+    public static class Serializer implements NodeSerializer<ActionMenuRefresh> {
 
         @Override
         public ActionMenuRefresh deserialize(Class type, ConfigNode node) throws NodeSerializeException {
-            try{
+            try {
                 return new ActionMenuRefresh(node.getValue(TypeInt.class));
-            } catch (Exception e){
+            } catch (Exception e) {
                 return new ActionMenuRefresh(node.getValue(TypeBool.class));
             }
         }

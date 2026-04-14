@@ -9,28 +9,29 @@ import org.bukkit.inventory.ItemStack;
 import ru.abstractmenus.api.Action;
 import ru.abstractmenus.api.inventory.Item;
 import ru.abstractmenus.api.inventory.Menu;
+
 import java.util.List;
 
 public class ActionItemClear implements Action {
 
     private List<Item> items;
 
-    private void setItems(List<Item> items){
+    private void setItems(List<Item> items) {
         this.items = items;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        for(Item item : items) {
+        for (Item item : items) {
             clear(player, menu, item);
         }
     }
 
-    private void clear(Player player, Menu menu, Item item){
+    private void clear(Player player, Menu menu, Item item) {
         ItemStack built = item.build(player, menu);
 
-        for (ItemStack is : player.getInventory()){
-            if(built.isSimilar(is))
+        for (ItemStack is : player.getInventory()) {
+            if (built.isSimilar(is))
                 player.getInventory().remove(is);
         }
 

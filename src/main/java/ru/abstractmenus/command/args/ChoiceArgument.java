@@ -5,6 +5,7 @@ import ru.abstractmenus.api.text.Colors;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
+
 import java.util.List;
 
 public class ChoiceArgument extends Argument {

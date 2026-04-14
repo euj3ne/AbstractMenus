@@ -28,8 +28,8 @@ public class TypeDouble extends DataType {
     public static class Serializer implements NodeSerializer<TypeDouble> {
 
         public TypeDouble deserialize(Class type, ConfigNode node) throws NodeSerializeException {
-            if(node.rawValue() instanceof Number) return new TypeDouble(node.getDouble());
-            if(!hasPlaceholder(node.getString("")))
+            if (node.rawValue() instanceof Number) return new TypeDouble(node.getDouble());
+            if (!hasPlaceholder(node.getString("")))
                 throw new NodeSerializeException(node, "Number type haven't placeholder to replace");
             return new TypeDouble(node.getString());
         }

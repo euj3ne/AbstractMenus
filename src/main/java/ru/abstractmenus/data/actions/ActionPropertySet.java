@@ -34,7 +34,7 @@ public class ActionPropertySet implements Action {
         if (this.slot != null) {
             slot = this.slot.getSlot(player, menu);
         } else {
-            slot = ((InventoryItem)clickedItem).getSlot(player, menu);
+            slot = ((InventoryItem) clickedItem).getSlot(player, menu);
         }
 
         slot.getSlots(index -> {
@@ -54,16 +54,16 @@ public class ActionPropertySet implements Action {
             Map<String, ItemProperty> propertyMap = new HashMap<>();
             Map<String, ConfigNode> children = node.childrenMap();
 
-            for (Map.Entry<String, ConfigNode> entry : children.entrySet()){
+            for (Map.Entry<String, ConfigNode> entry : children.entrySet()) {
                 String key = entry.getKey();
                 Class<? extends ItemProperty> token = Types.getItemPropertyType(key);
 
-                if (token != null){
+                if (token != null) {
                     propertyMap.put(key, entry.getValue().getValue(token));
                 }
             }
 
-            if (node.node("slot").rawValue() != null){
+            if (node.node("slot").rawValue() != null) {
                 targetSlot = node.node("slot").getValue(TypeSlot.class);
             }
 

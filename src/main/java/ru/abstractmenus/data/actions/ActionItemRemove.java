@@ -24,11 +24,11 @@ public class ActionItemRemove implements Action {
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        for(Item item : items) {
-            try{
-                if(item instanceof InventoryItem) {
-                    Slot slot = ((InventoryItem)item).getSlot(player, menu);
-                    slot.getSlots((s)->player.getInventory().clear(s));
+        for (Item item : items) {
+            try {
+                if (item instanceof InventoryItem) {
+                    Slot slot = ((InventoryItem) item).getSlot(player, menu);
+                    slot.getSlots((s) -> player.getInventory().clear(s));
                     continue;
                 }
 
@@ -37,36 +37,36 @@ public class ActionItemRemove implements Action {
                 if (!player.getInventory().removeItem(built).isEmpty()) {
                     if (built.isSimilar(player.getInventory().getHelmet())) {
                         decrement(built, player.getInventory().getHelmet(),
-                                ()->player.getInventory().setHelmet(null));
+                                () -> player.getInventory().setHelmet(null));
                         continue;
                     }
 
                     if (built.isSimilar(player.getInventory().getChestplate())) {
                         decrement(built, player.getInventory().getChestplate(),
-                                ()->player.getInventory().setChestplate(null));
+                                () -> player.getInventory().setChestplate(null));
                         continue;
                     }
 
-                    if (built.isSimilar(player.getInventory().getLeggings())){
+                    if (built.isSimilar(player.getInventory().getLeggings())) {
                         decrement(built, player.getInventory().getLeggings(),
-                                ()->player.getInventory().setLeggings(null));
+                                () -> player.getInventory().setLeggings(null));
                         continue;
                     }
 
                     if (built.isSimilar(player.getInventory().getBoots())) {
                         decrement(built, player.getInventory().getBoots(),
-                                ()->player.getInventory().setBoots(null));
+                                () -> player.getInventory().setBoots(null));
                         continue;
                     }
 
                     try {
                         if (built.isSimilar(player.getInventory().getItemInOffHand())) {
                             decrement(built, player.getInventory().getItemInOffHand(),
-                                    ()->player.getInventory().setItemInOffHand(null));
+                                    () -> player.getInventory().setItemInOffHand(null));
                         }
                     } catch (Throwable t) { /* Ignore. Offhand missing */ }
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 Logger.severe("Cannot remove item from player inventory: " + e.getMessage());
             }
         }

@@ -21,9 +21,9 @@ public class OpenRegionEnter extends Activator {
     }
 
     @EventHandler
-    public void onRegionJoin(RegionEnterEvent event){
+    public void onRegionJoin(RegionEnterEvent event) {
         List<String> regions = Handlers.getPlaceholderHandler().replace(event.getPlayer(), this.regions);
-        if(regions.contains(event.getRegion().getId())){
+        if (regions.contains(event.getRegion().getId())) {
             openMenu(event.getRegion(), event.getPlayer());
         }
     }

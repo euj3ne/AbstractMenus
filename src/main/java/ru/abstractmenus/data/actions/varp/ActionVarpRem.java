@@ -17,11 +17,11 @@ public class ActionVarpRem implements Action {
 
     private final List<VarData> dataList;
 
-    private ActionVarpRem(List<VarData> dataList){
+    private ActionVarpRem(List<VarData> dataList) {
         this.dataList = dataList;
     }
 
-    public void activate(Player p, Menu menu, Item clickedItem){
+    public void activate(Player p, Menu menu, Item clickedItem) {
         for (VarData data : dataList) {
             String varName = Handlers.getPlaceholderHandler().replace(p, data.getName());
 

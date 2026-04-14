@@ -4,21 +4,17 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
-import ru.abstractmenus.util.NMS;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Method;
 import java.util.Base64;
 
 public final class ItemUtil {
 
-    private static MethodHandle getByIdMethod;
     private static final ItemStack EMPTY_ITEM = new ItemStack(Material.AIR, 0);
 
-    private ItemUtil() { }
+    private ItemUtil() {
+    }
 
     public static ItemStack empty() {
         return EMPTY_ITEM;
@@ -31,29 +27,11 @@ public final class ItemUtil {
 
     public static <T> Material get(T value) {
         if (value instanceof Material) return (Material) value;
-        if (value instanceof Integer) return getById((Integer) value);
         return Material.getMaterial(value.toString());
-    }
-
-    public static Material getById(int id) {
-        try {
-            if (getByIdMethod != null)
-                return (Material) getByIdMethod.invoke(id);
-        } catch (Throwable ignore) { }
-
-        throw new IllegalArgumentException("Could not load material by id. You have to use material names");
     }
 
     public static void merge(ItemStack itemTo, ItemStack itemFrom) {
         itemTo.setType(itemFrom.getType());
-
-        if (NMS.getMinorVersion() <= 12)
-            itemTo.setData(itemFrom.getData());
-
-        try {
-            itemTo.setDurability(itemFrom.getDurability());
-        } catch (Throwable ignore) { }
-
         itemTo.setAmount(itemFrom.getAmount());
         itemTo.setItemMeta(itemFrom.getItemMeta());
     }
@@ -91,12 +69,4 @@ public final class ItemUtil {
         return source.isSimilar(compared) && compared.getAmount() >= source.getAmount();
     }
 
-    static {
-        try {
-            Method method = Material.class.getMethod("getMaterial", int.class);
-            getByIdMethod = MethodHandles.lookup().unreflect(method);
-        } catch (Throwable e) {
-            // Ignore
-        }
-    }
 }

@@ -5,7 +5,7 @@ import ru.abstractmenus.api.text.Colors;
 
 public class VarpCommand extends Command {
 
-    public VarpCommand(String permission){
+    public VarpCommand(String permission) {
         super(permission);
         setUsage("&e/varp get <player> <name> &7- Get personal variable value",
                 "&e/varp set <player> <name> <value> &7- Set personal variable",

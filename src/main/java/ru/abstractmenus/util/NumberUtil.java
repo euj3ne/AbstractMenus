@@ -2,7 +2,8 @@ package ru.abstractmenus.util;
 
 public final class NumberUtil {
 
-    private NumberUtil() { }
+    private NumberUtil() {
+    }
 
     public static double round(double num, double digit) {
         return (double) Math.round(num * digit) / digit;

@@ -14,7 +14,7 @@ public class ActionLog implements Action {
 
     private final String message;
 
-    private ActionLog(String message){
+    private ActionLog(String message) {
         this.message = message;
     }
 

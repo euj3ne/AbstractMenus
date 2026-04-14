@@ -18,7 +18,7 @@ public class NbtCompoundSerializer implements NodeSerializer<NBTCompound> {
         return getCompound(node);
     }
 
-    private Object getElement(ConfigNode node){
+    private Object getElement(ConfigNode node) {
         if (node.isPrimitive()) {
             return node.rawValue();
         } else if (node.isMap()) {
@@ -30,22 +30,22 @@ public class NbtCompoundSerializer implements NodeSerializer<NBTCompound> {
         }
     }
 
-    private List<Object> getList(ConfigNode node){
+    private List<Object> getList(ConfigNode node) {
         List<? extends ConfigNode> children = node.childrenList();
         List<Object> list = new ArrayList<>();
 
-        for (ConfigNode elem : children){
+        for (ConfigNode elem : children) {
             list.add(getElement(elem));
         }
 
         return list;
     }
 
-    private NBTCompound getCompound(ConfigNode node){
+    private NBTCompound getCompound(ConfigNode node) {
         Map<String, ConfigNode> children = node.childrenMap();
         NBTContainer compound = new NBTContainer();
 
-        for (Map.Entry<String, ConfigNode> entry : children.entrySet()){
+        for (Map.Entry<String, ConfigNode> entry : children.entrySet()) {
             String key = entry.getKey();
             Object elem = getElement(entry.getValue());
             putValue(compound, key, elem);
@@ -54,50 +54,50 @@ public class NbtCompoundSerializer implements NodeSerializer<NBTCompound> {
         return compound;
     }
 
-    private void putValue(NBTCompound compound, String key, Object value){
-        if (value instanceof NBTCompound){
+    private void putValue(NBTCompound compound, String key, Object value) {
+        if (value instanceof NBTCompound) {
             compound.getOrCreateCompound(key).mergeCompound((NBTCompound) value);
-        } else if (value instanceof List){
+        } else if (value instanceof List) {
             putList(compound, key, (List) value);
-        } else if (value instanceof String){
+        } else if (value instanceof String) {
             compound.setString(key, parseStr(value));
-        } else if (value instanceof Boolean){
+        } else if (value instanceof Boolean) {
             compound.setBoolean(key, (Boolean) value);
-        } else if (value instanceof Byte){
+        } else if (value instanceof Byte) {
             compound.setByte(key, (Byte) value);
-        } else if (value instanceof Integer){
+        } else if (value instanceof Integer) {
             compound.setInteger(key, (Integer) value);
-        } else if (value instanceof Double){
+        } else if (value instanceof Double) {
             compound.setDouble(key, (Double) value);
-        } else if (value instanceof Float){
+        } else if (value instanceof Float) {
             compound.setFloat(key, (Float) value);
-        } else if (value instanceof Long){
+        } else if (value instanceof Long) {
             compound.setLong(key, (Long) value);
-        } else if (value instanceof Short){
+        } else if (value instanceof Short) {
             compound.setShort(key, (Short) value);
-        } else if (value instanceof UUID){
+        } else if (value instanceof UUID) {
             compound.setUUID(key, (UUID) value);
         } else {
             compound.setObject(key, value);
         }
     }
 
-    private void putList(NBTCompound compound, String key, List value){
+    private void putList(NBTCompound compound, String key, List value) {
         if (value.isEmpty()) return;
 
         Object sample = value.get(0);
 
-        if (sample instanceof String){
+        if (sample instanceof String) {
             compound.getStringList(key).addAll(parseStrList(value));
-        } else if (sample instanceof Integer){
+        } else if (sample instanceof Integer) {
             compound.getIntegerList(key).addAll(value);
-        } else if (sample instanceof Long){
+        } else if (sample instanceof Long) {
             compound.getLongList(key).addAll(value);
-        } else if (sample instanceof Double){
+        } else if (sample instanceof Double) {
             compound.getDoubleList(key).addAll(value);
-        } else if (sample instanceof Float){
+        } else if (sample instanceof Float) {
             compound.getFloatList(key).addAll(value);
-        } else if (sample instanceof NBTCompound){
+        } else if (sample instanceof NBTCompound) {
             NBTCompoundList list = compound.getCompoundList(key);
 
             for (Object obj : value) {
@@ -106,11 +106,11 @@ public class NbtCompoundSerializer implements NodeSerializer<NBTCompound> {
         }
     }
 
-    private String parseStr(Object obj){
+    private String parseStr(Object obj) {
         return Colors.of(obj.toString());
     }
 
-    private List<String> parseStrList(List<String> list){
+    private List<String> parseStrList(List<String> list) {
         return Colors.ofList(list);
     }
 

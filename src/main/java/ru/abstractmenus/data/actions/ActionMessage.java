@@ -30,7 +30,8 @@ public class ActionMessage implements Action {
     private TypeInt stay = new TypeInt(0);
     private TypeInt fadeOut = new TypeInt(0);
 
-    private ActionMessage(){}
+    private ActionMessage() {
+    }
 
     private void setChatMessages(List<String> messages) {
         this.chatMessages = messages;
@@ -66,21 +67,21 @@ public class ActionMessage implements Action {
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if(player != null) {
+        if (player != null) {
             if (chatMessages != null) {
                 List<String> replaced = Handlers.getPlaceholderHandler().replace(player, chatMessages);
                 MiniMessageUtil.sendParsed(replaced, player);
             }
 
-            if(json != null) {
+            if (json != null) {
                 BaseComponent[] component = ComponentSerializer.parse(
                         Handlers.getPlaceholderHandler().replace(player, json));
 
-                if(component != null)
+                if (component != null)
                     player.spigot().sendMessage(component);
             }
 
-            if(actionbar != null) {
+            if (actionbar != null) {
                 String replaced = Handlers.getPlaceholderHandler().replace(player, actionbar);
                 ActionBar.create().send(player, MiniMessageUtil.parseToLegacy(replaced));
             }
@@ -121,14 +122,14 @@ public class ActionMessage implements Action {
             if (node.node("json").rawValue() != null) {
                 JsonElement json = node.node("json").getValue(JsonElement.class);
 
-                if(json != null) {
+                if (json != null) {
                     message.setJson(Colors.of(json.toString()));
                 } else {
                     throw new NodeSerializeException(node, "Cannot parse HOCON nodes as JSON objects. Check your menu file.");
                 }
             }
 
-            if (node.node("actionbar").rawValue() != null){
+            if (node.node("actionbar").rawValue() != null) {
                 message.setActionbar(Colors.of(node.node("actionbar").getString()));
             }
 

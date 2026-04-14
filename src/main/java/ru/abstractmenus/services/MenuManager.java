@@ -16,10 +16,14 @@ import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.ConfigurationLoader;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.source.ConfigSources;
+import ru.abstractmenus.api.inventory.Item;
+import ru.abstractmenus.api.inventory.ItemProperty;
+import ru.abstractmenus.data.properties.PropTexture;
 import ru.abstractmenus.menu.AbstractMenu;
 import ru.abstractmenus.util.FileUtils;
 import ru.abstractmenus.api.Logger;
 import ru.abstractmenus.util.NMS;
+import ru.abstractmenus.util.bukkit.Skulls;
 import ru.abstractmenus.util.bukkit.BukkitTasks;
 import ru.abstractmenus.util.bukkit.TaskHandle;
 
@@ -34,11 +38,20 @@ public final class MenuManager {
 
     private static MenuManager instance;
 
+    /**
+     * Pairs the open Menu with the Player who owns it so the per-tick
+     * {@link UpdateTask} doesn't have to do Bukkit.getPlayer(uuid) on every
+     * iteration. The Player reference becomes stale when the player logs out;
+     * UpdateTask checks isOnline() before using it and removePlayerMenu() drops
+     * the entry on close.
+     */
+    private record OpenedMenu(Menu menu, Player player) {}
+
     private final Plugin plugin;
     private final Path menuFolder;
 
-    private final Map<String, Menu> menus = new HashMap<>();
-    private final Map<UUID, Menu> openedMenus = new ConcurrentHashMap<>();
+    private final Map<String, Menu> menus = new ConcurrentHashMap<>();
+    private final Map<UUID, OpenedMenu> openedMenus = new ConcurrentHashMap<>();
     private final Map<UUID, ActionInputChat.InputAction> inputActions = new ConcurrentHashMap<>();
 
     private TaskHandle updateTask;
@@ -57,16 +70,17 @@ public final class MenuManager {
         return instance;
     }
 
-    public Menu getOpenedMenu(Player player){
-        return openedMenus.get(player.getUniqueId());
+    public Menu getOpenedMenu(Player player) {
+        OpenedMenu entry = openedMenus.get(player.getUniqueId());
+        return entry == null ? null : entry.menu();
     }
 
-    public Menu getMenu(String name){
+    public Menu getMenu(String name) {
         return menus.get(name.toLowerCase());
     }
 
-    public void addMenu(String name, Menu menu){
-        if(menu != null) {
+    public void addMenu(String name, Menu menu) {
+        if (menu != null) {
             menus.put(name.toLowerCase(), menu);
         }
     }
@@ -78,7 +92,7 @@ public final class MenuManager {
     }
 
     public void stopUpdateTask() {
-        if(updateTask != null) {
+        if (updateTask != null) {
             updateTask.cancel();
             updateTask = null;
         }
@@ -92,10 +106,10 @@ public final class MenuManager {
         Menu cloned = menu.clone();
 
         if (cloned != null) {
-            if (cloned instanceof AbstractMenu) {
-                ((AbstractMenu) cloned).setActivatedBy(activator);
-                ((AbstractMenu) cloned).setContext(ctx);
-                ((AbstractMenu) cloned).setOpenListener(this::setOpenedMenu);
+            if (cloned instanceof AbstractMenu am) {
+                am.setActivatedBy(activator);
+                am.setContext(ctx);
+                am.setOpenListener(this::setOpenedMenu);
             }
 
             try {
@@ -111,18 +125,18 @@ public final class MenuManager {
         closeMenu(player, true);
     }
 
-    public void closeMenu(Player player, boolean closeInventory){
+    public void closeMenu(Player player, boolean closeInventory) {
         Menu menu = removePlayerMenu(player);
 
-        if(menu != null) {
+        if (menu != null) {
             menu.close(player, closeInventory);
         }
     }
 
-    public void refreshMenu(Player player){
+    public void refreshMenu(Player player) {
         Menu opened = getOpenedMenu(player);
 
-        if(opened != null) {
+        if (opened != null) {
             opened.refresh(player);
         }
     }
@@ -132,11 +146,12 @@ public final class MenuManager {
             removePlayerMenu(player);
             return;
         }
-        openedMenus.put(player.getUniqueId(), menu);
+        openedMenus.put(player.getUniqueId(), new OpenedMenu(menu, player));
     }
 
     public Menu removePlayerMenu(Player player) {
-        return openedMenus.remove(player.getUniqueId());
+        OpenedMenu removed = openedMenus.remove(player.getUniqueId());
+        return removed == null ? null : removed.menu();
     }
 
     public ActionInputChat.InputAction getAndRemoveInputAction(Player player) {
@@ -160,9 +175,32 @@ public final class MenuManager {
 
         try {
             Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
-        } catch (Throwable ignore) {}
+        } catch (Throwable ignore) {
+        }
+
+        warmupSkulls();
 
         Logger.info(String.format("Loaded %d menus", menusCount));
+    }
+
+    private void warmupSkulls() {
+        int count = 0;
+        for (Menu menu : menus.values()) {
+            Collection<Item> items = menu.getItems();
+            if (items == null) continue;
+            for (Item item : items) {
+                if (item == null) continue;
+                for (ItemProperty itemProperty : item.getProperties().values()) {
+                    if (itemProperty instanceof PropTexture propTexture) {
+                        propTexture.warmup();
+                        count++;
+                    }
+                }
+            }
+        }
+        if (count > 0) {
+            Logger.info("Warmed up " + count + " skull textures");
+        }
     }
 
     // TODO Rewrite this shit
@@ -178,13 +216,13 @@ public final class MenuManager {
                     .build()
                     .load();
         } catch (Throwable t) {
-            Logger.severe("Cannot parse menu file '"+filename+"': " + t.getMessage());
+            Logger.severe("Cannot parse menu file '" + filename + "': " + t.getMessage());
             return 0;
         }
 
         ConfigNode menuList = conf.node("menus");
 
-        if(!menuList.isNull()) {
+        if (!menuList.isNull()) {
             Map<String, ConfigNode> map = menuList.childrenMap();
 
             for (Map.Entry<String, ConfigNode> entry : map.entrySet()) {
@@ -216,7 +254,7 @@ public final class MenuManager {
                             line, filename, ne.getMessage()));
                 }
             } catch (Throwable e) {
-                Logger.severe("Cannot load menu '"+filename+"': " + e.getMessage());
+                Logger.severe("Cannot load menu '" + filename + "': " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -226,16 +264,7 @@ public final class MenuManager {
 
     public boolean serve() throws IOException {
         if (watcher != null) {
-            watcher.close();
-
-            try {
-                watcherThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            watcher = null;
-            watcherThread = null;
+            stopWatcher();
             return false;
         } else {
             watcher = FileSystems.getDefault().newWatchService();
@@ -251,7 +280,7 @@ public final class MenuManager {
                         return;
                     }
 
-                    for (WatchEvent<?> event: key.pollEvents()) {
+                    for (WatchEvent<?> event : key.pollEvents()) {
                         WatchEvent.Kind<?> kind = event.kind();
 
                         if (kind == StandardWatchEventKinds.OVERFLOW) continue;
@@ -262,36 +291,58 @@ public final class MenuManager {
 
                         if (Files.isRegularFile(file) && System.currentTimeMillis() > lastUpdated + 100) {
                             Logger.info("Detected changes in " + filename + ". Loading ...");
-                            loadFile(file);
+                            // Bukkit API / menu map mutation must happen on main thread.
+                            BukkitTasks.runTask(() -> loadFile(file));
                             lastUpdated = System.currentTimeMillis();
                         }
                     }
 
                     if (!key.reset()) break;
                 }
-            });
+            }, "AbstractMenus-MenuWatcher");
+            watcherThread.setDaemon(true);
             watcherThread.start();
             return true;
         }
     }
 
+    private void stopWatcher() {
+        if (watcher == null) return;
+        try {
+            watcher.close();
+        } catch (IOException e) {
+            Logger.warning("Failed to close menu watcher: " + e.getMessage());
+        }
+        if (watcherThread != null) {
+            try {
+                watcherThread.join(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        watcher = null;
+        watcherThread = null;
+    }
+
     public void unloadAll() {
+        stopWatcher();
         unregisterActivators();
         Bukkit.getOnlinePlayers().forEach(this::closeMenu);
         stopUpdateTask();
         menus.clear();
         openedMenus.clear();
         inputActions.clear();
+        Skulls.clearCache();
     }
 
     private void unregisterActivators() {
         for (Menu menu : menus.values()) {
             List<Activator> activators = menu.getActivators();
 
-            if(activators != null) {
+            if (activators != null) {
                 for (Activator activator : activators) {
                     if (activator instanceof OpenCommand) {
-                        Command cmd = ((OpenCommand)activator).getCommand();
+                        Command cmd = ((OpenCommand) activator).getCommand();
 
                         AbstractMenus.instance()
                                 .getCommandManager()
@@ -305,7 +356,7 @@ public final class MenuManager {
     }
 
     private void loadExampleMenus() throws Exception {
-        if(!Files.exists(menuFolder)){
+        if (!Files.exists(menuFolder)) {
             int version = NMS.getMinorVersion();
 
             Files.createDirectory(menuFolder);
@@ -344,26 +395,28 @@ public final class MenuManager {
             return files;
         }
 
-        Files.list(folder).forEach((path) -> {
-            try {
-                if (Files.isDirectory(path)) {
-                    files.addAll(getAllFiles(path));
-                }
-                if("conf".equalsIgnoreCase(FileUtils.getExtension(path.toFile().getName()))){
-                    if(!checkInvisible(path)) {
-                        files.add(path);
+        try (var stream = Files.list(folder)) {
+            stream.forEach((path) -> {
+                try {
+                    if (Files.isDirectory(path)) {
+                        files.addAll(getAllFiles(path));
                     }
+                    if ("conf".equalsIgnoreCase(FileUtils.getExtension(path.toFile().getName()))) {
+                        if (!checkInvisible(path)) {
+                            files.add(path);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+            });
+        }
 
         return files;
     }
 
     private boolean checkInvisible(Path file) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(file.toFile()))){
+        try (BufferedReader reader = new BufferedReader(new FileReader(file.toFile()))) {
             String line = reader.readLine();
             return line != null && line.trim().equals("#invisible");
         } catch (IOException e) {
@@ -375,9 +428,13 @@ public final class MenuManager {
 
         @Override
         public void run() {
-            for (Map.Entry<UUID, Menu> entry : openedMenus.entrySet()) {
-                Player player = Bukkit.getPlayer(entry.getKey());
-                entry.getValue().update(player);
+            // openedMenus stores a Player ref alongside each Menu; avoids a
+            // Bukkit.getPlayer(uuid) lookup per entry per tick.
+            for (OpenedMenu entry : openedMenus.values()) {
+                Player player = entry.player();
+                if (player.isOnline()) {
+                    entry.menu().update(player);
+                }
             }
         }
 

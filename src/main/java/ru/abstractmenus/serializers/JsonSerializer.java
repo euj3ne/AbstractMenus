@@ -20,7 +20,7 @@ public class JsonSerializer implements NodeSerializer<JsonElement> {
         return getElement(node);
     }
 
-    private JsonElement getElement(ConfigNode node){
+    private JsonElement getElement(ConfigNode node) {
         JsonElement element = null;
 
         if (node.isPrimitive()) {
@@ -34,11 +34,11 @@ public class JsonSerializer implements NodeSerializer<JsonElement> {
         return element;
     }
 
-    private JsonPrimitive getPrimitive(ConfigNode node){
-        if(node.rawValue() != null){
+    private JsonPrimitive getPrimitive(ConfigNode node) {
+        if (node.rawValue() != null) {
             String type = node.rawValue().getClass().getName();
 
-            switch (type){
+            switch (type) {
                 default:
                     return new JsonPrimitive(node.getString("null"));
                 case "java.lang.Integer":
@@ -55,22 +55,22 @@ public class JsonSerializer implements NodeSerializer<JsonElement> {
         return new JsonPrimitive(node.getString("null"));
     }
 
-    private JsonArray getList(ConfigNode node){
+    private JsonArray getList(ConfigNode node) {
         List<? extends ConfigNode> list = node.childrenList();
         JsonArray arr = new JsonArray();
 
-        for (ConfigNode elem : list){
+        for (ConfigNode elem : list) {
             arr.add(getElement(elem));
         }
 
         return arr;
     }
 
-    private JsonObject getObject(ConfigNode node){
+    private JsonObject getObject(ConfigNode node) {
         Map<String, ConfigNode> children = node.childrenMap();
         JsonObject object = new JsonObject();
 
-        for (Map.Entry<String, ConfigNode> entry : children.entrySet()){
+        for (Map.Entry<String, ConfigNode> entry : children.entrySet()) {
             String key = entry.getKey();
             object.add(key, getElement(entry.getValue()));
         }

@@ -16,8 +16,8 @@ public class ActionPlayerChat implements Action {
 
     private final List<String> messages;
 
-    private ActionPlayerChat(List<String> messages){
-       this.messages = messages;
+    private ActionPlayerChat(List<String> messages) {
+        this.messages = messages;
     }
 
     @Override

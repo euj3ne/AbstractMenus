@@ -17,15 +17,15 @@ public class ActionVarRem implements Action {
 
     private final List<VarData> dataList;
 
-    private ActionVarRem(List<VarData> dataList){
+    private ActionVarRem(List<VarData> dataList) {
         this.dataList = dataList;
     }
 
-    public void activate(Player p, Menu menu, Item clickedItem){
+    public void activate(Player p, Menu menu, Item clickedItem) {
         for (VarData data : dataList) {
             String varName = Handlers.getPlaceholderHandler().replace(p, data.getName());
 
-            if(data.getPlayer() == null) {
+            if (data.getPlayer() == null) {
                 VariableManagerImpl.instance().deleteGlobal(varName);
             } else {
                 String playerName = Handlers.getPlaceholderHandler().replace(p, data.getPlayer());

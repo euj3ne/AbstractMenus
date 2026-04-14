@@ -31,7 +31,8 @@ public class ActionBroadcast implements Action {
     private TypeInt stay = new TypeInt(0);
     private TypeInt fadeOut = new TypeInt(0);
 
-    private ActionBroadcast(){}
+    private ActionBroadcast() {
+    }
 
     private void setChatMessages(List<String> messages) {
         this.chatMessages = messages;
@@ -67,7 +68,7 @@ public class ActionBroadcast implements Action {
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if(player != null) {
+        if (player != null) {
             if (chatMessages != null) {
                 List<String> replaced = Handlers.getPlaceholderHandler().replace(player, chatMessages);
 
@@ -76,17 +77,17 @@ public class ActionBroadcast implements Action {
                 }
             }
 
-            if(json != null) {
+            if (json != null) {
                 BaseComponent[] component = ComponentSerializer.parse(
                         Handlers.getPlaceholderHandler().replace(player, json));
 
-                if(component != null) {
+                if (component != null) {
                     for (Player p : Bukkit.getOnlinePlayers())
                         p.spigot().sendMessage(component);
                 }
             }
 
-            if(actionbar != null) {
+            if (actionbar != null) {
                 String replaced = Handlers.getPlaceholderHandler().replace(player, actionbar);
                 ActionBar bar = ActionBar.create();
 
@@ -120,27 +121,27 @@ public class ActionBroadcast implements Action {
         public ActionBroadcast deserialize(Class type, ConfigNode node) throws NodeSerializeException {
             ActionBroadcast message = new ActionBroadcast();
 
-            if(!node.isMap()) {
+            if (!node.isMap()) {
                 message.setChatMessages(Collections.singletonList(Colors.of(node.getString())));
                 return message;
             }
 
-            if(node.node("chat").rawValue() != null) {
+            if (node.node("chat").rawValue() != null) {
                 message.setChatMessages(Colors.ofList(node.node("chat").getList(String.class)));
             }
 
-            if(node.node("json").rawValue() != null) {
+            if (node.node("json").rawValue() != null) {
                 ConfigNode jsonNode = node.node("json");
                 JsonElement json = jsonNode.getValue(JsonElement.class);
 
-                if(json != null) {
+                if (json != null) {
                     message.setJson(Colors.of(json.toString()));
                 } else {
                     throw new NodeSerializeException(jsonNode, "Cannot parse HOCON nodes as JSON objects. Check your menu file.");
                 }
             }
 
-            if(node.node("actionbar").rawValue() != null){
+            if (node.node("actionbar").rawValue() != null) {
                 message.setActionbar(Colors.of(node.node("actionbar").getString()));
             }
 

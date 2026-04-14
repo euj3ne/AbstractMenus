@@ -15,6 +15,7 @@ public final class MainConfig {
     private boolean bungeeCord;
     private boolean bungeePing;
     private boolean useWorldGuard;
+    private boolean logOpenMenus;
     private boolean useMiniMessage;
 
     private String timeDay;
@@ -32,6 +33,7 @@ public final class MainConfig {
         bungeePing = node.node("bungeePing").getBoolean(false);
         useWorldGuard = node.node("useWorldGuard").getBoolean(false);
         useMiniMessage = node.node("useMiniMessage").getBoolean(false);
+        logOpenMenus = node.node("logOpenMenus").getBoolean(false);
 
         timeDay = node.node("time", "day").getString("d");
         timeHour = node.node("time", "hour").getString("h");

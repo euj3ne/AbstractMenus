@@ -14,13 +14,13 @@ public class VarGet extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(args.length == 1) {
+        if (args.length == 1) {
             String name = args[0];
             Var var = VariableManagerImpl.instance().getGlobal(name);
 
-            if(var != null) {
-                sender.sendMessage(Colors.of("&aValue of global variable '"+name+"': " + var.value()));
-            } else{
+            if (var != null) {
+                sender.sendMessage(Colors.of("&aValue of global variable '" + name + "': " + var.value()));
+            } else {
                 sender.sendMessage(Colors.of("&cVariable not found"));
             }
 

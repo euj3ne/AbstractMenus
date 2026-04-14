@@ -16,7 +16,7 @@ public class ActionPermissionRemove implements Action {
 
     private final List<String> permissions;
 
-    private ActionPermissionRemove(List<String> permissions){
+    private ActionPermissionRemove(List<String> permissions) {
         this.permissions = permissions;
     }
 

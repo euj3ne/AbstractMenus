@@ -12,16 +12,16 @@ public class RegionExtractor implements ValueExtractor {
         if (obj instanceof ProtectedRegion) {
             ProtectedRegion region = (ProtectedRegion) obj;
 
-            switch (placeholder) {
-                default: return null;
-                case "region_id": return region.getId();
-                case "region_priority": return String.valueOf(region.getPriority());
-                case "region_type": return region.getType().getName();
-                case "region_owners": return region.getOwners().toPlayersString();
-                case "region_members": return region.getMembers().toPlayersString();
-                case "region_owners_amount": return String.valueOf(region.getOwners().size());
-                case "region_members_amount": return String.valueOf(region.getMembers().size());
-            }
+            return switch (placeholder) {
+                default -> null;
+                case "region_id" -> region.getId();
+                case "region_priority" -> String.valueOf(region.getPriority());
+                case "region_type" -> region.getType().getName();
+                case "region_owners" -> region.getOwners().toPlayersString();
+                case "region_members" -> region.getMembers().toPlayersString();
+                case "region_owners_amount" -> String.valueOf(region.getOwners().size());
+                case "region_members_amount" -> String.valueOf(region.getMembers().size());
+            };
         }
         return "";
     }

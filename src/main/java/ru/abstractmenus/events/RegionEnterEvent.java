@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 public class RegionEnterEvent extends RegionEvent {
 
-    public RegionEnterEvent(ProtectedRegion region, Player player){
+    public RegionEnterEvent(ProtectedRegion region, Player player) {
         super(region, player);
     }
 

@@ -5,7 +5,8 @@ import ru.abstractmenus.api.Types;
 
 public final class Activators {
 
-    private Activators() { }
+    private Activators() {
+    }
 
     public static void init() {
         Types.registerActivator("command", OpenCommand.class, new OpenCommand.Serializer());
@@ -23,11 +24,11 @@ public final class Activators {
         Types.registerActivator("clickBlockType", OpenClickBlockType.class, new OpenClickBlockType.Serializer());
         Types.registerActivator("swapItems", OpenSwapItems.class, new OpenSwapItems.Serializer());
 
-        if(AbstractMenus.checkDependency("Citizens")){
+        if (AbstractMenus.checkDependency("Citizens")) {
             Types.registerActivator("clickNPC", OpenClickNPC.class, new OpenClickNPC.Serializer());
         }
 
-        if(AbstractMenus.checkDependency("WorldGuard")){
+        if (AbstractMenus.checkDependency("WorldGuard")) {
             Types.registerActivator("regionJoin", OpenRegionEnter.class, new OpenRegionEnter.Serializer());
             Types.registerActivator("regionLeave", OpenRegionLeave.class, new OpenRegionLeave.Serializer());
         }

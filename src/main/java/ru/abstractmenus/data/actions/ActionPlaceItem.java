@@ -24,13 +24,13 @@ public class ActionPlaceItem implements Action {
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if (!(menu instanceof AbstractMenu)) return;
-
-        AbstractMenu am = (AbstractMenu) menu;
+        if (!(menu instanceof AbstractMenu am)){
+            return;
+        }
 
         for (Item item : items) {
-            if (item instanceof InventoryItem) {
-                Slot slot = ((InventoryItem)item).getSlot(player, menu);
+            if (item instanceof InventoryItem inventoryItem) {
+                Slot slot = inventoryItem.getSlot(player, menu);
                 ItemStack built = item.build(player, menu);
                 am.placeItemQuiet(player, slot, built);
             }

@@ -8,20 +8,20 @@ import ru.abstractmenus.api.text.Colors;
 
 public class VarpGet extends Command {
 
-    public VarpGet(){
+    public VarpGet() {
         setUsage("&e/varp get <player> <name> &7 - Get value of personal variable");
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(args.length == 2){
+        if (args.length == 2) {
             String player = args[0];
             String name = args[1];
             Var var = VariableManagerImpl.instance().getPersonal(player, name);
 
-            if(var != null){
-                sender.sendMessage(Colors.of("&aValue of personal "+player+" variable '"+name+"': " + var.value()));
-            } else{
+            if (var != null) {
+                sender.sendMessage(Colors.of("&aValue of personal " + player + " variable '" + name + "': " + var.value()));
+            } else {
                 sender.sendMessage(Colors.of("&cVariable not found"));
             }
 

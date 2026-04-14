@@ -35,11 +35,12 @@ public final class Serializers {
 
     public static NodeSerializers serializers = NodeSerializers.defaults();
 
-    private Serializers() { }
+    private Serializers() {
+    }
 
     public static void init(Plugin plugin) {
         NodeSerializers serializers = Types.serializers();
-        
+
         serializers.register(TypeBool.class, new TypeBool.Serializer());
         serializers.register(TypeByte.class, new TypeByte.Serializer());
         serializers.register(TypeDouble.class, new TypeDouble.Serializer());
@@ -58,7 +59,8 @@ public final class Serializers {
 
         try {
             NbtCompoundSerializer.register(serializers);
-        } catch (Throwable ignore) { }
+        } catch (Throwable ignore) {
+        }
 
         serializers.register(EntityType.class, new EntityTypeSerializer());
         serializers.register(World.class, new WorldSerializer());
@@ -84,7 +86,8 @@ public final class Serializers {
 
         try {
             serializers.register(ShapedRecipe.class, new ShapedRecipeSerializer(plugin));
-        } catch (Throwable ignore){ }
+        } catch (Throwable ignore) {
+        }
 
         serializers.register(VarData.class, new VarData.Serializer());
         serializers.register(VarNumData.class, new VarNumData.Serializer());

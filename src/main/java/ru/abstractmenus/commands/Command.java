@@ -1,7 +1,9 @@
 package ru.abstractmenus.commands;
 
+import lombok.Getter;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,55 +12,50 @@ import java.util.Stack;
 
 public abstract class Command implements CommandExecutor {
 
+    @Getter
     private String permission;
+    @Getter
     private String[] usage;
     private final Map<String, Command> subCommands = new HashMap<>();
 
-    public Command(){ }
+    public Command() {
+    }
 
-    public Command(String permission){
+    public Command(String permission) {
         this.permission = permission;
     }
 
-    public String[] getUsage(){
-        return usage;
-    }
-
-    public String getPermission(){
-        return permission;
-    }
-
-    public Command setPermission(String permission){
+    public Command setPermission(String permission) {
         this.permission = permission;
         return this;
     }
 
-    public Command addSub(String arg, Command command){
+    public Command addSub(String arg, Command command) {
         subCommands.put(arg, command);
         return this;
     }
 
-    public Command getSub(String arg){
+    public Command getSub(String arg) {
         return subCommands.get(arg);
     }
 
-    public Command setUsage(String... usage){
+    public Command setUsage(String... usage) {
         this.usage = usage;
         return this;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
-        if(!checkPermission(sender, this)) return false;
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command cmd, @NotNull String label, @NotNull String[] args) {
+        if (!checkPermission(sender, this)) return false;
 
-        if(args.length > 0){
+        if (args.length > 0) {
             Stack<Command> stack = new Stack<>();
             Command sub;
 
-            for (String arg : args){
-                if(stack.isEmpty()){
+            for (String arg : args) {
+                if (stack.isEmpty()) {
                     sub = getSub(arg);
-                    if(sub != null) {
+                    if (sub != null) {
                         stack.push(sub);
                         continue;
                     }
@@ -66,21 +63,21 @@ public abstract class Command implements CommandExecutor {
                 }
 
                 sub = stack.peek().getSub(arg);
-                if(sub != null) {
+                if (sub != null) {
                     stack.push(sub);
                     continue;
                 }
                 break;
             }
 
-            if(!stack.isEmpty()){
+            if (!stack.isEmpty()) {
                 Command command = stack.pop();
-                if(!checkPermission(sender, command)) return false;
-                command.execute(sender, Arrays.copyOfRange(args, stack.size()+1, args.length));
+                if (!checkPermission(sender, command)) return false;
+                command.execute(sender, Arrays.copyOfRange(args, stack.size() + 1, args.length));
                 return true;
             }
 
-            if(usage != null){
+            if (usage != null) {
                 sender.sendMessage(usage);
             }
             return false;
@@ -90,8 +87,8 @@ public abstract class Command implements CommandExecutor {
         return true;
     }
 
-    private boolean checkPermission(CommandSender sender, Command command){
-        if(command.getPermission() != null){
+    private boolean checkPermission(CommandSender sender, Command command) {
+        if (command.getPermission() != null) {
             return sender.hasPermission(command.getPermission());
         }
         return true;

@@ -7,18 +7,18 @@ import ru.abstractmenus.api.text.Colors;
 
 public class VarpRem extends Command {
 
-    public VarpRem(){
+    public VarpRem() {
         setUsage("&e/varp rem <player> <name> &7 - Remove personal variable");
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(args.length == 2){
+        if (args.length == 2) {
             String player = args[0];
             String name = args[1];
 
             VariableManagerImpl.instance().deletePersonal(player, name);
-            sender.sendMessage(Colors.of("&aSuccessfully removed personal variable '"+name+"' for player "+player+""));
+            sender.sendMessage(Colors.of("&aSuccessfully removed personal variable '" + name + "' for player " + player + ""));
             return;
         }
         sender.sendMessage(Colors.ofArr(getUsage()));

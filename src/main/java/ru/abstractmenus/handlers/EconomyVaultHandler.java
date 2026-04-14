@@ -8,7 +8,7 @@ public class EconomyVaultHandler implements EconomyHandler {
 
     private final Economy economy;
 
-    public EconomyVaultHandler(Economy economy){
+    public EconomyVaultHandler(Economy economy) {
         this.economy = economy;
     }
 

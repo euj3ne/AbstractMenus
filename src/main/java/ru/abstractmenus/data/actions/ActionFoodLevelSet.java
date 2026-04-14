@@ -14,7 +14,7 @@ public class ActionFoodLevelSet implements Action {
 
     private final TypeInt foodLevel;
 
-    private ActionFoodLevelSet(TypeInt foodLevel){
+    private ActionFoodLevelSet(TypeInt foodLevel) {
         this.foodLevel = foodLevel;
     }
 

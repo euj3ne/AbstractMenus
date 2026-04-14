@@ -14,8 +14,8 @@ public class PotionEffectSerializer implements NodeSerializer<PotionEffect> {
         String name = node.node("effectType").getString();
         PotionEffectType type = PotionEffectType.getByName(name);
 
-        if(type == null){
-            throw new NodeSerializeException(node.node("effectType"), "Potion effect type '"+name+"' does not exist");
+        if (type == null) {
+            throw new NodeSerializeException(node.node("effectType"), "Potion effect type '" + name + "' does not exist");
         }
 
         int duration = node.node("duration").getInt();

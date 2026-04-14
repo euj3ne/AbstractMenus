@@ -14,14 +14,13 @@ public class ActionPageNext implements Action {
 
     private final TypeInt skip;
 
-    private ActionPageNext(TypeInt skip){
+    private ActionPageNext(TypeInt skip) {
         this.skip = skip;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if (menu instanceof GeneratedMenu) {
-            GeneratedMenu tmpl = (GeneratedMenu) menu;
+        if (menu instanceof GeneratedMenu tmpl) {
             int skip = this.skip.getInt(player, menu);
             tmpl.nextPage(player, skip);
         }

@@ -20,14 +20,14 @@ public class GeneratedMenuSerializer implements MenuSerializer<GeneratedMenu> {
         if (catalogToken != null) {
             menu.setCatalog(node.node("catalog").getValue(catalogToken));
         } else {
-            throw new NodeSerializeException(node.node("catalog"), "Catalog with type '"+catalogType+"' not found");
+            throw new NodeSerializeException(node.node("catalog"), "Catalog with type '" + catalogType + "' not found");
         }
 
-        if (node.node("matrix").rawValue() != null){
+        if (node.node("matrix").rawValue() != null) {
             menu.setMatrix(node.node("matrix").getValue(Matrix.class));
         }
 
-        if(node.node("items").rawValue() != null){
+        if (node.node("items").rawValue() != null) {
             menu.setItems(node.node("items").getList(Item.class));
         }
 

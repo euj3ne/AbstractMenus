@@ -20,33 +20,33 @@ public final class TimeParser {
         this("d", "h", "min", "sec");
     }
 
-    public TimeParser(String day, String hour, String minute, String second){
+    public TimeParser(String day, String hour, String minute, String second) {
         this.day = day;
         this.hour = hour;
         this.minute = minute;
         this.second = second;
     }
 
-    public long fromString(String time){
+    public long fromString(String time) {
         char[] chars = time.toCharArray();
         long value = 0L;
         long multiplier = 0;
 
         StringBuilder num = new StringBuilder();
 
-        for (int i = chars.length - 1; i >= 0; i--){
+        for (int i = chars.length - 1; i >= 0; i--) {
             char c = chars[i];
             int digit = getDigit(c);
 
-            if (digit > -1){
+            if (digit > -1) {
                 num.insert(0, c);
             } else {
-                if (num.length() > 0){
+                if (num.length() > 0) {
                     value += parseValue(num.toString(), multiplier);
                 }
 
-                for (int j = 0; j < TIME_UNIT_MULT[0].length; j++){
-                    if (TIME_UNIT_MULT[0][j] == c){
+                for (int j = 0; j < TIME_UNIT_MULT[0].length; j++) {
+                    if (TIME_UNIT_MULT[0][j] == c) {
                         multiplier = TIME_UNIT_MULT[1][j];
                         break;
                     }
@@ -61,7 +61,7 @@ public final class TimeParser {
         return value;
     }
 
-    public String toString(long millis){
+    public String toString(long millis) {
         StringBuilder builder = new StringBuilder();
 
         long days = TimeUnit.MILLISECONDS.toDays(millis);
@@ -99,7 +99,7 @@ public final class TimeParser {
         return builder.toString();
     }
 
-    private long parseValue(String str, long multiplier){
+    private long parseValue(String str, long multiplier) {
         int numVal = Integer.parseInt(str, 10);
         return multiplier * numVal;
     }

@@ -1,5 +1,7 @@
 package ru.abstractmenus.menu.generated;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -13,39 +15,29 @@ import java.util.*;
 
 public class GeneratedMenu extends SimpleMenu {
 
+    @Setter
+    @Getter
     private Catalog<?> catalog;
+    @Setter
     private Matrix matrix;
 
     private final Map<Integer, Object> slotContexts = new HashMap<>();
 
     private ArrayList<?> snapshot;
+    @Getter
     private Object currentObject;
     private int perPage;
+    @Getter
     private int page;
+    @Getter
     private int pages;
 
     public GeneratedMenu(String title, int size) {
         super(title, size);
     }
 
-    public Catalog<?> getCatalog() {
-        return catalog;
-    }
-
     public List<?> getSnapshot() {
         return snapshot;
-    }
-
-    public Object getCurrentObject() {
-        return currentObject;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public int getPages() {
-        return pages;
     }
 
     public void nextPage(Player player, int skip) {
@@ -76,15 +68,10 @@ public class GeneratedMenu extends SimpleMenu {
 
             createInventory(player, this);
 
-            if(openActions != null)
+            if (openActions != null)
                 openActions.activate(player, this, null);
 
-            snapshot = new ArrayList<>(catalog.snapshot(player, this));
-            perPage = matrix.getSlots().size();
-            pages = snapshot.size() / perPage;
-
-            if (snapshot.size() % perPage > 0) pages++;
-
+            // snapshot/perPage/pages are computed inside refresh(); calling it once is enough.
             refresh(player);
 
             player.openInventory(inventory);
@@ -94,7 +81,7 @@ public class GeneratedMenu extends SimpleMenu {
             return true;
         }
 
-        if(denyActions != null)
+        if (denyActions != null)
             denyActions.activate(player, this, null);
 
         return false;
@@ -112,7 +99,6 @@ public class GeneratedMenu extends SimpleMenu {
         pages = snapshot.size() / perPage;
 
         if (snapshot.size() % perPage > 0) pages++;
-
 
 
         int from = page * perPage;
@@ -143,14 +129,6 @@ public class GeneratedMenu extends SimpleMenu {
         Object ctx = slotContexts.get(slot);
         if (ctx != null) currentObject = ctx;
         super.click(slot, player, type);
-    }
-
-    public void setCatalog(Catalog<?> catalog){
-        this.catalog = catalog;
-    }
-
-    public void setMatrix(Matrix matrix){
-        this.matrix = matrix;
     }
 
     @Override

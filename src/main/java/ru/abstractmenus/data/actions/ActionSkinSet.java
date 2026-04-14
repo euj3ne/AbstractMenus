@@ -15,12 +15,12 @@ public class ActionSkinSet implements Action {
     private final String texture;
     private final String signature;
 
-    private ActionSkinSet(String texture, String signature){
+    private ActionSkinSet(String texture, String signature) {
         this.texture = texture;
         this.signature = signature;
     }
 
-    public void activate(Player player, Menu menu, Item clickedItem){
+    public void activate(Player player, Menu menu, Item clickedItem) {
         Handlers.getSkinHandler().setSkin(player,
                 Handlers.getPlaceholderHandler().replace(player, texture),
                 Handlers.getPlaceholderHandler().replace(player, signature));

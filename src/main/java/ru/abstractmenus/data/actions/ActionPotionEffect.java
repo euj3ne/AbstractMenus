@@ -16,14 +16,14 @@ public class ActionPotionEffect implements Action {
 
     private List<PotionEffect> effects;
 
-    private void setEffects(List<PotionEffect> effects){
+    private void setEffects(List<PotionEffect> effects) {
         this.effects = effects;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if(effects != null){
-            for(PotionEffect effect : effects){
+        if (effects != null) {
+            for (PotionEffect effect : effects) {
                 player.addPotionEffect(effect);
             }
         }

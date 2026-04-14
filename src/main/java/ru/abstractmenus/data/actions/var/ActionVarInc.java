@@ -28,7 +28,7 @@ public class ActionVarInc implements Action {
             double value = data.getValue().getDouble(p, menu);
             Function<Double, Double> func = num -> num + value;
 
-            if(data.getPlayer() == null) {
+            if (data.getPlayer() == null) {
                 VariableManagerImpl.instance().modifyNumericGlobal(varName, func);
             } else {
                 String playerName = Handlers.getPlaceholderHandler().replace(p, data.getPlayer());

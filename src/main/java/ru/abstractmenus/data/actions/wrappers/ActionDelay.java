@@ -17,15 +17,15 @@ public class ActionDelay implements Action {
     private final TypeInt delay;
     private final Actions actions;
 
-    private ActionDelay(TypeInt delay, Actions actions){
+    private ActionDelay(TypeInt delay, Actions actions) {
         this.delay = delay;
         this.actions = actions;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if(actions != null){
-            BukkitTasks.runTaskLater(()->actions.activate(player, menu, clickedItem), delay.getInt(player, menu));
+        if (actions != null) {
+            BukkitTasks.runTaskLater(() -> actions.activate(player, menu, clickedItem), delay.getInt(player, menu));
         }
     }
 

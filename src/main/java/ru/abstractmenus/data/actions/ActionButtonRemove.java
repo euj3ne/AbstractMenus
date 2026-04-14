@@ -21,7 +21,7 @@ public class ActionButtonRemove implements Action {
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
         AbstractMenu am = (AbstractMenu) menu;
-        
+
         slots.getSlot(player, menu).getSlots(am::removeMenuItem);
     }
 

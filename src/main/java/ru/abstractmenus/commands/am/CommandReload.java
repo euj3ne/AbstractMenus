@@ -21,8 +21,8 @@ public class CommandReload extends Command {
             HeadAnimManager.instance().loadAnimations();
             Logger.info("Plugin reloaded!");
 
-            if(sender instanceof Player) sender.sendMessage(Colors.of("&a&l[AbstractMenus] plugin reloaded!"));
-        } catch (Exception e){
+            if (sender instanceof Player) sender.sendMessage(Colors.of("&a&l[AbstractMenus] plugin reloaded!"));
+        } catch (Exception e) {
             Logger.severe("Error while reloading plugin: " + e.getMessage());
         }
     }

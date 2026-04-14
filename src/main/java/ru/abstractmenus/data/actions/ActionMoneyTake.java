@@ -15,13 +15,13 @@ public class ActionMoneyTake implements Action {
 
     private final TypeDouble money;
 
-    private ActionMoneyTake(TypeDouble money){
+    private ActionMoneyTake(TypeDouble money) {
         this.money = money;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if(Handlers.getEconomyHandler() != null){
+        if (Handlers.getEconomyHandler() != null) {
             Handlers.getEconomyHandler().takeBalance(player, money.getDouble(player, menu));
         }
     }

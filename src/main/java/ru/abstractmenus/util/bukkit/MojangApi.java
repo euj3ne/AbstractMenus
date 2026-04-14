@@ -4,14 +4,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
+import org.bukkit.Bukkit;
 import ru.abstractmenus.api.Logger;
-import ru.abstractmenus.util.NMS;
-import ru.abstractmenus.util.StringUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -26,25 +26,27 @@ public final class MojangApi {
     private static final Base64.Decoder BASE64_DECODER = Base64.getDecoder();
     private static final JsonParser JSON_PARSER = new JsonParser();
 
-    private MojangApi() { }
+    private MojangApi() {
+    }
 
     public static UUID getUUID(String name) {
-        try (InputStream in = new URL(String.format(UUID_URL, name)).openStream()) {
+        try (InputStream in = openConnection(String.format(UUID_URL, name))) {
             String jsonString = getLine(in);
 
-            if(jsonString != null && !jsonString.isEmpty()) {
+            if (jsonString != null && !jsonString.isEmpty()) {
                 JsonObject object = JSON_PARSER.parse(jsonString).getAsJsonObject();
                 String uuid = object.get("id").getAsString();
                 return UuidUtil.getUUID(uuid);
             }
-        } catch (IOException ignore) { }
+        } catch (IOException ignore) {
+        }
         return null;
     }
 
     public static String getTexture(UUID premiumUuid) {
         String url = String.format(SKIN_URL, clearUUID(premiumUuid));
 
-        try (InputStream in = new URL(url).openStream()) {
+        try (InputStream in = openConnection(url)) {
             String jsonString = getLine(in);
 
             if (jsonString != null && !jsonString.isEmpty()) {
@@ -60,7 +62,7 @@ public final class MojangApi {
                     }
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Logger.warning(String.format("Cannot fetch premium skin of %s: %s", premiumUuid, e.getMessage()));
         }
 
@@ -71,28 +73,19 @@ public final class MojangApi {
         return textureToUrl(getTexture(premiumUuid));
     }
 
-    public static GameProfile createProfile(String skinUrl) {
-        GameProfile profile;
-
-        if (NMS.getMinorVersion() >= 20) {
-            profile = new GameProfile(generateUUID(skinUrl), "");
-        } else {
-            profile = new GameProfile(generateUUID(skinUrl), null);
-        }
-
-        if (profile.getProperties() == null)
-            throw new IllegalStateException("Profile doesn't contains a property map");
+    public static PlayerProfile createProfile(String skinUrl) {
+        PlayerProfile profile = Bukkit.createProfile(generateUUID(skinUrl), "");
 
         byte[] prop = String.format("{textures:{SKIN:{url:\"%s\"}}}", skinUrl).getBytes(StandardCharsets.UTF_8);
         String encodedData = Base64.getEncoder().encodeToString(prop);
-        profile.getProperties().put("textures", new Property("textures", encodedData));
+        profile.setProperty(new ProfileProperty("textures", encodedData));
 
         return profile;
     }
 
-    public static GameProfile loadProfileWithSkin(String playerName) {
+    public static PlayerProfile loadProfileWithSkin(String playerName) {
         UUID uuid = MojangApi.getUUID(playerName);
-        GameProfile profile = null;
+        PlayerProfile profile = null;
 
         if (uuid != null) {
             String url = MojangApi.getSkinUrl(uuid);
@@ -111,27 +104,40 @@ public final class MojangApi {
         JsonObject json = JSON_PARSER.parse(encoded).getAsJsonObject();
         JsonObject textures = json.get("textures").getAsJsonObject();
 
-        if(textures.entrySet().size() != 0){
+        if (!textures.entrySet().isEmpty()) {
             return textures.get("SKIN").getAsJsonObject().get("url").getAsString();
         }
 
         return null;
     }
 
-    private static String getLine(InputStream in){
-        if (in == null) return null;
-
-        Scanner scanner = new Scanner(in);
-        StringBuilder builder = new StringBuilder();
-        while(scanner.hasNext()) builder.append(scanner.next());
-        return builder.toString();
+    private static InputStream openConnection(String url) throws IOException {
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        conn.setConnectTimeout(5000);
+        conn.setReadTimeout(5000);
+        try {
+            return conn.getInputStream();
+        } catch (IOException e) {
+            conn.disconnect();
+            throw e;
+        }
     }
 
-    private static String clearUUID(UUID uuid){
+    private static String getLine(InputStream in) {
+        if (in == null) return null;
+
+        try (Scanner scanner = new Scanner(in, StandardCharsets.UTF_8)) {
+            StringBuilder builder = new StringBuilder();
+            while (scanner.hasNext()) builder.append(scanner.next());
+            return builder.toString();
+        }
+    }
+
+    private static String clearUUID(UUID uuid) {
         return uuid.toString().replace("-", "");
     }
 
-    private static UUID generateUUID(String url){
+    private static UUID generateUUID(String url) {
         return UUID.nameUUIDFromBytes(("AbstractMenusProfile:" + url).getBytes(StandardCharsets.UTF_8));
     }
 }

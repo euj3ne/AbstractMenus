@@ -11,7 +11,7 @@ public class SimpleMenuSerializer implements MenuSerializer<SimpleMenu> {
     public SimpleMenu deserialize(ConfigNode node, String title, int size) throws NodeSerializeException {
         SimpleMenu menu = new SimpleMenu(title, size);
 
-        if(node.node("items").rawValue() != null){
+        if (node.node("items").rawValue() != null) {
             menu.setItems(node.node("items").getList(Item.class));
         }
 

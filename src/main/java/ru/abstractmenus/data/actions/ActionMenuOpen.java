@@ -15,7 +15,7 @@ public class ActionMenuOpen implements Action {
 
     private final String menu;
 
-    private ActionMenuOpen(String menu){
+    private ActionMenuOpen(String menu) {
         this.menu = menu;
     }
 
@@ -24,7 +24,7 @@ public class ActionMenuOpen implements Action {
         String name = Handlers.getPlaceholderHandler().replace(player, this.menu);
         Menu menuToOpen = MenuManager.instance().getMenu(name);
 
-        if(menuToOpen != null)
+        if (menuToOpen != null)
             MenuManager.instance().openMenu(player, menuToOpen);
     }
 

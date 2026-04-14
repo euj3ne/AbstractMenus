@@ -10,16 +10,16 @@ public class InventoryItem extends SimpleItem {
 
     private TypeSlot slot = new TypeSlot(new SlotIndex(-1));
 
-    public Slot getSlot(Player player, Menu menu){
+    public Slot getSlot(Player player, Menu menu) {
         return slot.getSlot(player, menu);
     }
 
-    public void setSlot(TypeSlot slot){
+    public void setSlot(TypeSlot slot) {
         this.slot = slot;
     }
 
     @Override
-    public InventoryItem clone(){
+    public InventoryItem clone() {
         return (InventoryItem) super.clone();
     }
 }

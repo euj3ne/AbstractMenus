@@ -21,7 +21,7 @@ public class ActionPropertyRemove implements Action {
     private final TypeSlot slot;
     private final Set<String> keys;
 
-    private ActionPropertyRemove(TypeSlot slot, Set<String> keys){
+    private ActionPropertyRemove(TypeSlot slot, Set<String> keys) {
         this.slot = slot;
         this.keys = keys;
     }
@@ -33,7 +33,7 @@ public class ActionPropertyRemove implements Action {
         if (this.slot != null) {
             slot = this.slot.getSlot(player, menu);
         } else {
-            slot = ((InventoryItem)clickedItem).getSlot(player, menu);
+            slot = ((InventoryItem) clickedItem).getSlot(player, menu);
         }
 
         slot.getSlots(s -> {
@@ -54,10 +54,10 @@ public class ActionPropertyRemove implements Action {
             TypeSlot targetSlot = null;
             List<String> props;
 
-            if (node.isMap()){
+            if (node.isMap()) {
                 props = node.node("properties").getList(String.class);
 
-                if (node.node("slot").rawValue() != null){
+                if (node.node("slot").rawValue() != null) {
                     targetSlot = node.node("slot").getValue(TypeSlot.class);
                 }
             } else {

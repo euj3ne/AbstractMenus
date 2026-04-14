@@ -14,7 +14,7 @@ public class ActionHealthSet implements Action {
 
     private final TypeDouble health;
 
-    private ActionHealthSet(TypeDouble health){
+    private ActionHealthSet(TypeDouble health) {
         this.health = health;
     }
 

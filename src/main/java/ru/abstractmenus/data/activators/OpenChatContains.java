@@ -1,6 +1,7 @@
 package ru.abstractmenus.data.activators;
 
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
@@ -16,17 +17,17 @@ public class OpenChatContains extends Activator {
 
     private final List<String> messages;
 
-    private OpenChatContains(List<String> messages){
+    private OpenChatContains(List<String> messages) {
         this.messages = messages;
     }
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent event){
-        for(String str : messages){
+    public void onChat(AsyncChatEvent event) {
+        for (String str : messages) {
             String msg = Handlers.getPlaceholderHandler().replace(event.getPlayer(), str);
 
-            if(event.getMessage().contains(msg)){
-                BukkitTasks.runTask(()->openMenu(null, event.getPlayer()));
+            if (event.signedMessage().message().contains(msg)) {
+                BukkitTasks.runTask(() -> openMenu(null, event.getPlayer()));
                 return;
             }
         }

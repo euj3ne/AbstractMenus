@@ -20,13 +20,13 @@ public class BannerPatternSerializer implements NodeSerializer<Pattern> {
 
         try {
             type = PatternType.valueOf(typeStr);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new NodeSerializeException(node.node("type"), "Cannot find banner pattern type: " + typeStr);
         }
 
-        try{
+        try {
             color = DyeColor.valueOf(colorStr);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new NodeSerializeException(node.node("color"), "Cannot find pattern color: " + colorStr);
         }
 

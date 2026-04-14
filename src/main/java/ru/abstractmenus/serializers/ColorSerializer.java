@@ -10,10 +10,10 @@ public class ColorSerializer implements NodeSerializer<Color> {
 
     @Override
     public Color deserialize(Class<Color> type, ConfigNode node) throws NodeSerializeException {
-        if(node.getString() != null){
+        if (node.getString() != null) {
             String str = node.getString();
 
-            if(str.charAt(0) == '#'){
+            if (str.charAt(0) == '#') {
                 str = str.substring(1);
                 int rgb = Integer.parseInt(str, 16);
                 return Color.fromRGB(rgb);
@@ -21,7 +21,7 @@ public class ColorSerializer implements NodeSerializer<Color> {
 
             String[] rgbArr = str.split(",");
 
-            if(rgbArr.length == 3){
+            if (rgbArr.length == 3) {
                 int r = Integer.parseInt(rgbArr[0].trim());
                 int g = Integer.parseInt(rgbArr[1].trim());
                 int b = Integer.parseInt(rgbArr[2].trim());

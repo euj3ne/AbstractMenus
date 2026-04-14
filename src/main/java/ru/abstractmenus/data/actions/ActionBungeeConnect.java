@@ -14,7 +14,7 @@ public class ActionBungeeConnect implements Action {
 
     private final String serverName;
 
-    private ActionBungeeConnect(String serverName){
+    private ActionBungeeConnect(String serverName) {
         this.serverName = serverName;
     }
 

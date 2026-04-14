@@ -1,5 +1,7 @@
 package ru.abstractmenus.command.args;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.command.CommandSender;
 import ru.abstractmenus.api.text.Colors;
 import ru.abstractmenus.command.ArgumentParseException;
@@ -12,35 +14,18 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+@Getter
 public abstract class Argument {
 
     private final String key;
+    @Setter
     private String def;
+    @Setter
     private String errorMessage;
 
     public Argument(String key, String errorMessage) {
         this.key = key;
         this.errorMessage = errorMessage;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-
-    public String getDef() {
-        return def;
-    }
-
-    public void setDef(String def) {
-        this.def = def;
     }
 
     public String help() {
@@ -72,16 +57,14 @@ public abstract class Argument {
             }
 
             String argType = node.node("type").getString("string");
-            Argument argument;
-
-            switch (argType.toLowerCase()) {
-                default: throw new NodeSerializeException(node, "Undefined command argument type");
-                case "string": argument = node.getValue(StringArgument.class); break;
-                case "number": argument = node.getValue(NumberArgument.class); break;
-                case "integer": argument = node.getValue(IntegerArgument.class); break;
-                case "choice": argument = node.getValue(ChoiceArgument.class); break;
-                case "player": argument = node.getValue(PlayerArgument.class); break;
-            }
+            Argument argument = switch (argType.toLowerCase()) {
+                case "string" -> node.getValue(StringArgument.class);
+                case "number" -> node.getValue(NumberArgument.class);
+                case "integer" -> node.getValue(IntegerArgument.class);
+                case "choice" -> node.getValue(ChoiceArgument.class);
+                case "player" -> node.getValue(PlayerArgument.class);
+                default -> throw new NodeSerializeException(node, "Undefined command argument type");
+            };
 
             String errorMessage = node.node("error").getString();
             String def = node.node("default").getString();

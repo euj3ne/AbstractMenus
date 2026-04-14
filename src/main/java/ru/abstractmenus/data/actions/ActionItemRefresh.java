@@ -20,7 +20,7 @@ public class ActionItemRefresh implements Action {
     private final TypeInt ticks;
     private final TypeSlot slot;
 
-    private ActionItemRefresh(TypeBool value, TypeInt ticks, TypeSlot slot){
+    private ActionItemRefresh(TypeBool value, TypeInt ticks, TypeSlot slot) {
         this.isRefresh = value;
         this.ticks = ticks;
         this.slot = slot;
@@ -49,7 +49,7 @@ public class ActionItemRefresh implements Action {
         menu.refreshItem(slot, player);
     }
 
-    public static class Serializer implements NodeSerializer<ActionItemRefresh>{
+    public static class Serializer implements NodeSerializer<ActionItemRefresh> {
 
         @Override
         public ActionItemRefresh deserialize(Class type, ConfigNode node) throws NodeSerializeException {
@@ -57,13 +57,13 @@ public class ActionItemRefresh implements Action {
             TypeBool isRefresh = null;
             TypeSlot slot = null;
 
-            if (node.isPrimitive()){
-                try{
+            if (node.isPrimitive()) {
+                try {
                     ticks = node.getValue(TypeInt.class);
-                } catch (Exception e){
+                } catch (Exception e) {
                     isRefresh = node.getValue(TypeBool.class);
                 }
-            } else if (node.isMap()){
+            } else if (node.isMap()) {
                 ticks = node.node("delay").getValue(TypeInt.class);
                 slot = node.node("slot").getValue(TypeSlot.class);
             } else {

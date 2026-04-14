@@ -5,7 +5,7 @@ import ru.abstractmenus.api.text.Colors;
 
 public class VarCommand extends Command {
 
-    public VarCommand(String permission){
+    public VarCommand(String permission) {
         super(permission);
         setUsage("&e/var get <name> &7- Get global variable value",
                 "&e/var set <name> <value> &7- Set global variable",

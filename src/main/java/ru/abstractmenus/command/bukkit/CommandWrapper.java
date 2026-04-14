@@ -2,6 +2,7 @@ package ru.abstractmenus.command.bukkit;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
+import org.jetbrains.annotations.NotNull;
 import ru.abstractmenus.command.CommandManager;
 
 import java.util.Collections;
@@ -22,6 +23,7 @@ public final class CommandWrapper extends BukkitCommand {
         return true;
     }
 
+    @NotNull
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
         List<String> suggestions = manager.complete(sender, alias, args);

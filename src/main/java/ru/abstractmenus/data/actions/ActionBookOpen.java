@@ -7,17 +7,16 @@ import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
 import org.bukkit.entity.Player;
 import ru.abstractmenus.nms.book.Book;
-import ru.abstractmenus.util.NMS;
 import ru.abstractmenus.api.inventory.Menu;
 import ru.abstractmenus.api.inventory.Item;
 import ru.abstractmenus.api.Action;
 import ru.abstractmenus.api.Handlers;
 
-public class ActionBookOpen extends NMS implements Action {
+public class ActionBookOpen implements Action {
 
     private final BookData bookData;
 
-    private ActionBookOpen(BookData bookData){
+    private ActionBookOpen(BookData bookData) {
         this.bookData = bookData;
     }
 

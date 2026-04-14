@@ -29,7 +29,7 @@ public class ActionVarpDiv implements Action {
             double value = data.getValue().getDouble(p, menu);
 
             if (value == 0) {
-                Logger.info("Cannot divide variable "+varName+" by 0. Skipped");
+                Logger.info("Cannot divide variable " + varName + " by 0. Skipped");
                 continue;
             }
 

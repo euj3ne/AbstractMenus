@@ -2,6 +2,7 @@ package ru.abstractmenus.placeholders;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import ru.abstractmenus.placeholders.hooks.ActivatorPlaceholders;
 import ru.abstractmenus.placeholders.hooks.HeadAnimPlaceholders;
 import ru.abstractmenus.placeholders.hooks.CatalogPlaceholders;
@@ -82,16 +83,19 @@ public final class PAPIPlaceholders {
             this.id = id;
         }
 
+        @NotNull
         @Override
         public String getIdentifier() {
             return id;
         }
 
+        @NotNull
         @Override
         public String getAuthor() {
             return "BrainRTP, Nanit";
         }
 
+        @NotNull
         @Override
         public String getVersion() {
             return "1.0";

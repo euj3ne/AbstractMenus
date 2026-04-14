@@ -28,8 +28,8 @@ public class TypeInt extends DataType {
     public static class Serializer implements NodeSerializer<TypeInt> {
 
         public TypeInt deserialize(Class type, ConfigNode node) throws NodeSerializeException {
-            if(node.rawValue() instanceof Integer) return new TypeInt(node.getInt());
-            if(!hasPlaceholder(node.getString("")))
+            if (node.rawValue() instanceof Integer) return new TypeInt(node.getInt());
+            if (!hasPlaceholder(node.getString("")))
                 throw new NodeSerializeException(node, "Number type haven't placeholder to replace");
             return new TypeInt(node.getString());
         }

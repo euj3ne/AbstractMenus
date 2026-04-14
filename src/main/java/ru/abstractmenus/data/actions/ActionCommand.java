@@ -3,6 +3,7 @@ package ru.abstractmenus.data.actions;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import ru.abstractmenus.AbstractMenus;
 import ru.abstractmenus.api.Action;
 import ru.abstractmenus.api.Handlers;
 import ru.abstractmenus.api.inventory.Item;
@@ -10,7 +11,6 @@ import ru.abstractmenus.api.inventory.Menu;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,17 +38,19 @@ public class ActionCommand implements Action {
         for (String command : playerCommands) {
             if (command != null) {
                 String resultCommand = isIgnorePlaceholder ? command : Handlers.getPlaceholderHandler().replace(player, command);
-                player.chat("/" + Handlers.getPlaceholderHandler().replace(player, resultCommand));
+                player.performCommand(resultCommand);
             }
         }
 
         if (!consoleCommands.isEmpty()) {
-            for (String command : consoleCommands) {
-                if (command != null) {
-                    String resultCommand = isIgnorePlaceholder ? command : Handlers.getPlaceholderHandler().replace(player, command);
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), resultCommand);
+            Bukkit.getServer().getGlobalRegionScheduler().execute(AbstractMenus.instance(), () -> {
+                for (String command : consoleCommands) {
+                    if (command != null) {
+                        String resultCommand = isIgnorePlaceholder ? command : Handlers.getPlaceholderHandler().replace(player, command);
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), resultCommand);
+                    }
                 }
-            }
+            });
         }
     }
 

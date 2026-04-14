@@ -10,17 +10,18 @@ import ru.abstractmenus.api.Activator;
 
 public class OpenSwapItems extends Activator {
 
-    private OpenSwapItems() { }
+    private OpenSwapItems() {
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void itemSwapEvent(PlayerSwapHandItemsEvent event){
+    public void itemSwapEvent(PlayerSwapHandItemsEvent event) {
         if (!event.isCancelled()) {
             openMenu(null, event.getPlayer());
             event.setCancelled(true);
         }
     }
 
-    public static class Serializer implements NodeSerializer<OpenSwapItems>{
+    public static class Serializer implements NodeSerializer<OpenSwapItems> {
 
         @Override
         public OpenSwapItems deserialize(Class type, ConfigNode node) throws NodeSerializeException {

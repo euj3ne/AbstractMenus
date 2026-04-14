@@ -38,7 +38,7 @@ public class SimpleMenu extends AbstractMenu {
 
             createInventory(player, this);
 
-            if(openActions != null)
+            if (openActions != null)
                 openActions.activate(player, this, null);
 
             refresh(player);
@@ -50,7 +50,7 @@ public class SimpleMenu extends AbstractMenu {
             return true;
         }
 
-        if(denyActions != null)
+        if (denyActions != null)
             denyActions.activate(player, this, null);
 
         return false;
@@ -75,10 +75,12 @@ public class SimpleMenu extends AbstractMenu {
                 try {
                     ItemStack built = item.build(player, this);
 
+                    if (built == null) continue;
+
                     if (built.getAmount() > 0) {
                         Slot slot = ((InventoryItem) item).getSlot(player, this);
 
-                        if (slot instanceof SlotIndex && ((SlotIndex)slot).getIndex() == -1) {
+                        if (slot instanceof SlotIndex && ((SlotIndex) slot).getIndex() == -1) {
                             slot = new SlotIndex(getFreeSlot());
                         }
 

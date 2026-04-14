@@ -47,7 +47,7 @@ public class TypeLocation extends DataType {
         );
     }
 
-    public static String locToString(Location location){
+    public static String locToString(Location location) {
         return String.format("%s,%s,%s,%s,%s,%s",
                 location.getWorld().getName(),
                 location.getX(),
@@ -61,17 +61,17 @@ public class TypeLocation extends DataType {
 
         @Override
         public TypeLocation deserialize(Class type, ConfigNode node) throws NodeSerializeException {
-            if(!node.isMap()){
-                if(node.getString() != null){
+            if (!node.isMap()) {
+                if (node.getString() != null) {
                     return parseString(node, node.getString());
                 }
 
                 throw new NodeSerializeException(node, "Error while parsing location in node " + node.parent().key() + ". Inline location format invalid");
             }
 
-            try{
+            try {
                 return parseNode(node);
-            } catch (NodeSerializeException e){
+            } catch (NodeSerializeException e) {
                 return new TypeLocation(parseNative(node));
             }
         }
@@ -84,15 +84,15 @@ public class TypeLocation extends DataType {
             TypeFloat yaw = new TypeFloat(0.0f);
             TypeFloat pitch = new TypeFloat(0.0f);
 
-            if(node.node("world").rawValue() != null){
+            if (node.node("world").rawValue() != null) {
                 world = node.node("world").getValue(TypeWorld.class);
             }
 
-            if(node.node("yaw").rawValue() != null){
+            if (node.node("yaw").rawValue() != null) {
                 yaw = node.node("yaw").getValue(TypeFloat.class);
             }
 
-            if(node.node("pitch").rawValue() != null){
+            if (node.node("pitch").rawValue() != null) {
                 pitch = node.node("pitch").getValue(TypeFloat.class);
             }
 
@@ -107,19 +107,19 @@ public class TypeLocation extends DataType {
             float yaw = 0.0f;
             float pitch = 0.0f;
 
-            if(node.node("world").rawValue() != null){
+            if (node.node("world").rawValue() != null) {
                 world = node.node("world").getValue(World.class);
 
-                if(world == null){
-                    throw new NodeSerializeException(node, "Error while parsing location in node " + node.parent().key() + ". World '"+node.node("world").getString()+"' not exists");
+                if (world == null) {
+                    throw new NodeSerializeException(node, "Error while parsing location in node " + node.parent().key() + ". World '" + node.node("world").getString() + "' not exists");
                 }
             }
 
-            if(node.node("yaw").rawValue() != null){
+            if (node.node("yaw").rawValue() != null) {
                 yaw = node.node("yaw").getFloat();
             }
 
-            if(node.node("pitch").rawValue() != null){
+            if (node.node("pitch").rawValue() != null) {
                 pitch = node.node("pitch").getFloat();
             }
 
@@ -136,24 +136,24 @@ public class TypeLocation extends DataType {
 
             String[] args = str.split(",");
 
-            if(args.length < 3){
+            if (args.length < 3) {
                 throw new NodeSerializeException(node, "Error while parsing location. Minimal arguments count: 3 (x,y,z)");
             }
 
-            if(args.length == 3){
+            if (args.length == 3) {
                 x = new TypeDouble(args[0].trim());
                 y = new TypeDouble(args[1].trim());
                 z = new TypeDouble(args[2].trim());
             }
 
-            if(args.length == 4){
+            if (args.length == 4) {
                 world = new TypeWorld(args[0].trim());
                 x = new TypeDouble(args[1].trim());
                 y = new TypeDouble(args[2].trim());
                 z = new TypeDouble(args[3].trim());
             }
 
-            if(args.length == 6){
+            if (args.length == 6) {
                 world = new TypeWorld(args[0].trim());
                 x = new TypeDouble(args[1].trim());
                 y = new TypeDouble(args[2].trim());

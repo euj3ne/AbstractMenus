@@ -9,7 +9,7 @@ import ru.abstractmenus.util.TimeUtil;
 
 public class VarSet extends Command {
 
-    public VarSet(){
+    public VarSet() {
         setUsage("/var set <name> <value> - Set global variable",
                 "/var set <name> <value> <replace> - Set global variable with replace protection",
                 "/var set <name> <value> <time> - Set global temporary variable",
@@ -18,7 +18,7 @@ public class VarSet extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(args.length >= 2) {
+        if (args.length >= 2) {
             String name = args[0];
             String value = args[1];
 
@@ -27,18 +27,18 @@ public class VarSet extends Command {
                     .value(value)
                     .build();
 
-            if(args.length == 2) {
+            if (args.length == 2) {
                 // just set var
                 VariableManagerImpl.instance().saveGlobal(var);
-                sender.sendMessage(Colors.of("&aSuccessfully set value '"+value+"' to global variable '"+name+"'"));
+                sender.sendMessage(Colors.of("&aSuccessfully set value '" + value + "' to global variable '" + name + "'"));
                 return;
             }
-            if(args.length == 3){
-                if(args[2].equals("true") || args[2].equals("false")){
+            if (args.length == 3) {
+                if (args[2].equals("true") || args[2].equals("false")) {
                     // set replace var
                     boolean replace = Boolean.parseBoolean(args[2]);
                     VariableManagerImpl.instance().saveGlobal(var, replace);
-                    sender.sendMessage(Colors.of("&aSuccessfully set value '"+value+"' to global variable '"+name+"' (replace="+replace+")"));
+                    sender.sendMessage(Colors.of("&aSuccessfully set value '" + value + "' to global variable '" + name + "' (replace=" + replace + ")"));
                     return;
                 }
                 // set time var
@@ -48,23 +48,23 @@ public class VarSet extends Command {
                             .expiry(System.currentTimeMillis() + time)
                             .build();
                     VariableManagerImpl.instance().saveGlobal(var);
-                    sender.sendMessage(Colors.of("&aSuccessfully set value '"+value+"' to global temporary variable '"+name+"'"));
-                } catch (Exception e){
+                    sender.sendMessage(Colors.of("&aSuccessfully set value '" + value + "' to global temporary variable '" + name + "'"));
+                } catch (Exception e) {
                     sender.sendMessage(Colors.of("&cInvalid time format!"));
                 }
                 return;
             }
-            if(args.length == 4){
+            if (args.length == 4) {
                 // set time replace var
-                try{
+                try {
                     long time = TimeUtil.parseTime(args[2]);
                     boolean replace = Boolean.parseBoolean(args[3]);
                     var = var.toBuilder()
                             .expiry(System.currentTimeMillis() + time)
                             .build();
                     VariableManagerImpl.instance().saveGlobal(var, replace);
-                    sender.sendMessage(Colors.of("&aSuccessfully set value '"+value+"' to global temporary variable '"+name+"'"));
-                } catch (Exception e){
+                    sender.sendMessage(Colors.of("&aSuccessfully set value '" + value + "' to global temporary variable '" + name + "'"));
+                } catch (Exception e) {
                     sender.sendMessage(Colors.of("&cInvalid time format!"));
                 }
                 return;

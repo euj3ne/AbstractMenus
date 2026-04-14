@@ -10,9 +10,10 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 
 public final class RegionUtils {
 
-    private RegionUtils(){}
+    private RegionUtils() {
+    }
 
-    private static RegionManager getRegionManager(org.bukkit.World bukkitWorld){
+    private static RegionManager getRegionManager(org.bukkit.World bukkitWorld) {
         try {
             World world = BukkitAdapter.adapt(bukkitWorld);
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
@@ -29,12 +30,12 @@ public final class RegionUtils {
         return null;
     }
 
-    public static Iterable<ProtectedRegion> getRegions(org.bukkit.World bukkitWorld){
+    public static Iterable<ProtectedRegion> getRegions(org.bukkit.World bukkitWorld) {
         RegionManager regionManager = getRegionManager(bukkitWorld);
         return (regionManager != null) ? regionManager.getRegions().values() : null;
     }
 
-    public static ProtectedRegion getRegion(org.bukkit.World world, String name){
+    public static ProtectedRegion getRegion(org.bukkit.World world, String name) {
         RegionManager regionManager = getRegionManager(world);
         return (regionManager != null) ? regionManager.getRegion(name) : null;
     }

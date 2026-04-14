@@ -6,18 +6,15 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 import ru.abstractmenus.MainConfig;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public final class MiniMessageUtil {
 
     private static Replacer replacer;
 
-    private MiniMessageUtil() {}
+    private MiniMessageUtil() {
+    }
 
     public static void init(MainConfig config) {
         if (config.isUseMiniMessage()) {
@@ -60,40 +57,11 @@ public final class MiniMessageUtil {
     private static class ActiveReplacer implements Replacer {
 
         private final MiniMessage miniMessage = MiniMessage.miniMessage();
-        private final char legacyChar = LegacyComponentSerializer.SECTION_CHAR;
         private final LegacyComponentSerializer serializer = LegacyComponentSerializer.builder()
                 .character(LegacyComponentSerializer.SECTION_CHAR)
                 .hexColors()
                 .useUnusualXRepeatedCharacterHexFormat()
                 .build();
-
-        private final Pattern colorPattern = Pattern.compile(legacyChar + "([0-9a-fk-rx])");
-        private final Map<String, String> colorTags = new HashMap<>();
-
-        private ActiveReplacer() {
-            colorTags.put("0", "<black>");
-            colorTags.put("1", "<dark_blue>");
-            colorTags.put("2", "<dark_green>");
-            colorTags.put("3", "<dark_aqua>");
-            colorTags.put("4", "<dark_red>");
-            colorTags.put("5", "<dark_purple>");
-            colorTags.put("6", "<gold>");
-            colorTags.put("7", "<gray>");
-            colorTags.put("8", "<dark_gray>");
-            colorTags.put("9", "<blue>");
-            colorTags.put("a", "<green>");
-            colorTags.put("b", "<aqua>");
-            colorTags.put("c", "<red>");
-            colorTags.put("d", "<light_purple>");
-            colorTags.put("e", "<yellow>");
-            colorTags.put("f", "<white>");
-            colorTags.put("k", "<obf>");
-            colorTags.put("l", "<b>");
-            colorTags.put("m", "<st>");
-            colorTags.put("n", "<u>");
-            colorTags.put("o", "<i>");
-            colorTags.put("r", "<reset>");
-        }
 
         @Override
         public void sendParsed(List<String> input, Player player) {
@@ -101,7 +69,7 @@ public final class MiniMessageUtil {
 
             for (String line : input) {
                 if (line != null) {
-                    send(parse(replaceLegacyTags(line)), player);
+                    send(parse(LegacyColorTagReplacer.replaceLegacyTags(line)), player);
                 }
             }
         }
@@ -111,7 +79,7 @@ public final class MiniMessageUtil {
             if (input == null) return null;
             if (input.isEmpty()) return input;
 
-            return serializer.serialize(parse(replaceLegacyTags(input)));
+            return serializer.serialize(parse(LegacyColorTagReplacer.replaceLegacyTags(input)));
         }
 
         @Override
@@ -119,9 +87,11 @@ public final class MiniMessageUtil {
             if (input == null) return null;
             if (input.isEmpty()) return input;
 
-            return input.stream()
-                    .map(this::parseToLegacy)
-                    .collect(Collectors.toList());
+            List<String> out = new ArrayList<>(input.size());
+            for (String line : input) {
+                out.add(parseToLegacy(line));
+            }
+            return out;
         }
 
         private void send(Component component, Player player) {
@@ -130,29 +100,6 @@ public final class MiniMessageUtil {
 
         private Component parse(String input) {
             return miniMessage.deserialize(input);
-        }
-
-        private String replaceLegacyTags(String input) {
-            Matcher matcher = colorPattern.matcher(input);
-            String replaced = input;
-
-            while (matcher.find()) {
-                String code = matcher.group(1);
-                String replacement = colorTags.get(code);
-
-                if (replacement != null) {
-                    String before = replaced.substring(0, matcher.start());
-                    String after = replaced.substring(matcher.end());
-                    StringBuilder result = new StringBuilder(before);
-
-                    replaced = result.append(replacement)
-                            .append(after)
-                            .toString();
-                }
-                matcher = colorPattern.matcher(replaced);
-            }
-
-            return replaced;
         }
     }
 

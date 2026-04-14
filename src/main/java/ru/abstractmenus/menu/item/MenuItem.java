@@ -1,5 +1,6 @@
 package ru.abstractmenus.menu.item;
 
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import ru.abstractmenus.api.Rule;
@@ -11,11 +12,16 @@ import java.util.Map;
 
 public class MenuItem extends InventoryItem {
 
+    @Setter
     private Map<ClickType, Actions> clicks;
+    @Setter
     private Actions anyClickActions;
+    @Setter
     private Rule showRules;
+    @Setter
     private Rule minorRules;
 
+    @Setter
     private int clickCooldown = 1;
     private long cooldownExpiry;
 
@@ -33,37 +39,17 @@ public class MenuItem extends InventoryItem {
         if (clicks != null) {
             Actions actions = clicks.get(type);
 
-            if(actions != null) {
+            if (actions != null) {
                 actions.activate(clicker, menu, this);
             }
         }
     }
 
-    public boolean checkShowRules(Player player, Menu menu){
+    public boolean checkShowRules(Player player, Menu menu) {
         if (minorRules != null)
             minorRules.check(player, menu, this);
 
         return showRules == null || showRules.check(player, menu, this);
-    }
-
-    public void setClicks(Map<ClickType, Actions> data){
-        this.clicks = data;
-    }
-
-    public void setShowRules(Rule rules){
-        this.showRules = rules;
-    }
-
-    public void setMinorRules(Rule rules){
-        this.minorRules = rules;
-    }
-
-    public void setClickCooldown(int clickCooldown) {
-        this.clickCooldown = clickCooldown;
-    }
-
-    public void setAnyClickActions(Actions actions){
-        this.anyClickActions = actions;
     }
 
     @Override

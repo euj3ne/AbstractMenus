@@ -16,7 +16,12 @@ public class SlotUtil {
     }
 
     public static boolean contains(Slot slot, int index) {
-        return collect(slot).contains(index);
+        if (slot == null) return false;
+        boolean[] found = {false};
+        slot.getSlots(s -> {
+            if (s == index) found[0] = true;
+        });
+        return found[0];
     }
 
 }

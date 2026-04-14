@@ -21,7 +21,7 @@ public class TypeWorld extends DataType {
         this.value = value;
     }
 
-    public World getWorld(Player player, Menu menu){
+    public World getWorld(Player player, Menu menu) {
         return (value != null) ? value : Bukkit.getWorld(replaceFor(player, menu));
     }
 
@@ -31,7 +31,8 @@ public class TypeWorld extends DataType {
             try {
                 World world = Bukkit.getWorld(node.getString());
                 if (world != null) return new TypeWorld(world);
-            } catch (Throwable ignore){ }
+            } catch (Throwable ignore) {
+            }
 
             return new TypeWorld(node.getString());
         }

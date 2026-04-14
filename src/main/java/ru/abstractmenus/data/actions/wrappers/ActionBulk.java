@@ -15,13 +15,13 @@ public class ActionBulk implements Action {
 
     private final List<Actions> actions;
 
-    private ActionBulk(List<Actions> actions){
+    private ActionBulk(List<Actions> actions) {
         this.actions = actions;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        for (Actions action : actions){
+        for (Actions action : actions) {
             action.activate(player, menu, clickedItem);
         }
     }

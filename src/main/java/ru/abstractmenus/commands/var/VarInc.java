@@ -15,14 +15,14 @@ public class VarInc extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(args.length == 2) {
+        if (args.length == 2) {
             try {
                 String name = args[0];
                 double value = Double.parseDouble(args[1]);
                 Function<Double, Double> func = num -> num + value;
                 VariableManagerImpl.instance().modifyNumericGlobal(name, func);
-                sender.sendMessage(Colors.of("&aSuccessfully incremented global variable '"+name+"'. Current value: " + VariableManagerImpl.instance().getGlobal(name).value()));
-            } catch (NumberFormatException e){
+                sender.sendMessage(Colors.of("&aSuccessfully incremented global variable '" + name + "'. Current value: " + VariableManagerImpl.instance().getGlobal(name).value()));
+            } catch (NumberFormatException e) {
                 sender.sendMessage(Colors.of("&cNumber format error. You have to use valid number."));
             }
 

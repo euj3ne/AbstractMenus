@@ -1,25 +1,61 @@
 package ru.abstractmenus.util.bukkit;
 
-import com.mojang.authlib.GameProfile;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import ru.abstractmenus.api.Logger;
-import ru.abstractmenus.services.ProfileStorage;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class Skulls {
 
-    private Skulls() { }
+    private static final Map<String, ItemStack> skullCache = new ConcurrentHashMap<>();
+    /**
+     * Cache of resolved player-skin skulls keyed by lowercased player name.
+     * Populated lazily by {@link #getPlayerSkull(String)} and invalidated by
+     * {@link #invalidatePlayerSkull(String)} (called from PlayerJoinEvent so a
+     * rejoining player gets fresh skin data on the next query).
+     */
+    private static final Map<String, ItemStack> playerSkullCache = new ConcurrentHashMap<>();
 
-    public static ItemStack getCustomSkull(String url) {
-        GameProfile profile = MojangApi.createProfile(url);
-        return getCustomSkull(profile);
+    private Skulls() {
     }
 
-    public static ItemStack getCustomSkull(GameProfile profile) {
+    public static void clearCache() {
+        skullCache.clear();
+        playerSkullCache.clear();
+    }
+
+    public static void invalidatePlayerSkull(String playerName) {
+        if (playerName != null) {
+            playerSkullCache.remove(playerName.toLowerCase(Locale.ROOT));
+        }
+    }
+
+    public static ItemStack getCustomSkull(String texture) {
+        ItemStack cached = skullCache.get(texture);
+        if (cached != null) return cached.clone();
+
+        UUID uuid = UUID.nameUUIDFromBytes(("Skull:" + texture).getBytes());
+
+        PlayerProfile profile = Bukkit.createProfile(uuid);
+        profile.setProperty(new ProfileProperty("textures", texture));
+
+        ItemStack result = getCustomSkull(profile);
+        if (result != null) {
+            skullCache.put(texture, result);
+            return result.clone();
+        }
+        return result;
+    }
+
+    public static ItemStack getCustomSkull(com.destroystokyo.paper.profile.PlayerProfile profile) {
         ItemStack head = createSkullItem();
 
         if (profile == null) return head;
@@ -28,50 +64,42 @@ public final class Skulls {
 
         if (headMeta == null) return null;
 
-        Field profileField;
-
-        try {
-            Method method = headMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
-            method.setAccessible(true);
-            method.invoke(headMeta, profile);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-            try {
-                profileField = headMeta.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profileField.set(headMeta, profile);
-            } catch (NoSuchFieldException | IllegalAccessException ex2) {
-                ex2.printStackTrace();
-            }
-        }
-
+        headMeta.setPlayerProfile(profile);
         head.setItemMeta(headMeta);
 
         return head;
     }
 
     public static ItemStack getPlayerSkull(String playerName) {
-        GameProfile profile = ProfileStorage.instance().getProfile(playerName);
+        if (playerName == null) return null;
 
-        if (profile == null) {
-            Logger.info("Profile '" + playerName + "' not found. Trying to load ...");
+        String key = playerName.toLowerCase(Locale.ROOT);
+        ItemStack cached = playerSkullCache.get(key);
+        if (cached != null) return cached.clone();
 
-            profile = MojangApi.loadProfileWithSkin(playerName);
+        Player player = Bukkit.getPlayer(playerName);
 
-            if (profile == null)
-                profile = ProfileStorage.DEF_PROFILE;
-
-            ProfileStorage.instance().add(playerName, profile);
+        if (player == null) {
+            Logger.info("Player '" + playerName + "' is not online or not found.");
+            return null;
         }
 
-        return getCustomSkull(profile);
+        PlayerProfile profile = player.getPlayerProfile();
+
+        if (profile == null) {
+            Logger.info("PlayerProfile for '" + playerName + "' not found.");
+            return null;
+        }
+
+        ItemStack result = getCustomSkull(profile);
+        if (result != null) {
+            playerSkullCache.put(key, result);
+            return result.clone();
+        }
+        return result;
     }
 
     public static ItemStack createSkullItem() {
-        try {
-            return new ItemStack(ItemUtil.getHeadMaterial(), 1, (short) 3);
-        } catch (Throwable t) {
-            return new ItemStack(ItemUtil.getHeadMaterial());
-        }
+        return new ItemStack(ItemUtil.getHeadMaterial());
     }
-
 }

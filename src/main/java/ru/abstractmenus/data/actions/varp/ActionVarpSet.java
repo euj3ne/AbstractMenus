@@ -23,7 +23,7 @@ public class ActionVarpSet implements Action {
         this.dataList = dataList;
     }
 
-    public void activate(Player p, Menu menu, Item clickedItem){
+    public void activate(Player p, Menu menu, Item clickedItem) {
         for (VarData data : dataList) {
             String varName = Handlers.getPlaceholderHandler().replace(p, data.getName());
             String varVal = Handlers.getPlaceholderHandler().replace(p, data.getValue());

@@ -23,7 +23,7 @@ public class TypeBool extends DataType {
         this.hasValue = true;
     }
 
-    public boolean getBool(Player player, Menu menu){
+    public boolean getBool(Player player, Menu menu) {
         return (hasValue) ? value : TRUE_VAL.equalsIgnoreCase(replaceFor(player, menu));
     }
 

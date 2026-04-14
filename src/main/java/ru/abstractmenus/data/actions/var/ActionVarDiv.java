@@ -29,13 +29,13 @@ public class ActionVarDiv implements Action {
             double value = data.getValue().getDouble(p, menu);
 
             if (value == 0) {
-                Logger.info("Cannot divide variable "+varName+" by 0. Skipped");
+                Logger.info("Cannot divide variable " + varName + " by 0. Skipped");
                 continue;
             }
 
             Function<Double, Double> func = num -> num / value;
 
-            if(data.getPlayer() == null) {
+            if (data.getPlayer() == null) {
                 VariableManagerImpl.instance().modifyNumericGlobal(varName, func);
             } else {
                 String playerName = Handlers.getPlaceholderHandler().replace(p, data.getPlayer());

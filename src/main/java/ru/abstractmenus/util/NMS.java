@@ -1,35 +1,12 @@
 package ru.abstractmenus.util;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import ru.abstractmenus.api.Logger;
 
-import java.lang.invoke.MethodHandle;
+public final class NMS {
 
-public abstract class NMS {
+    private static volatile int minorVersion = -1;
 
-    private static final Class<?> packetClass;
-    private static int minorVersion = -1;
-
-    static {
-        packetClass = getNMSClass("Packet");
-    }
-
-    public static Class<?> getNMSClass(String name) {
-        try {
-            return Class.forName("net.minecraft.server." + getVersion() + "." + name);
-        } catch(Exception ex) {
-            return null;
-        }
-    }
-
-    public static Class<?> getCraftBukkitClass(String name, Package pkg){
-        try {
-            return Class.forName("org.bukkit.craftbukkit." + getVersion() + pkg.getName() + name);
-        } catch(Exception ex) {
-            return null;
-        }
-    }
+    private NMS() {}
 
     public static String getVersion() {
         try {
@@ -41,7 +18,7 @@ public abstract class NMS {
         }
     }
 
-    public static int getMinorVersion(){
+    public static int getMinorVersion() {
         if (minorVersion == -1) {
             String ver = getVersion();
             String[] arr = ver.split("_");
@@ -49,33 +26,5 @@ public abstract class NMS {
         }
 
         return minorVersion;
-    }
-
-    public static void sendPacket(Player player, Object packet) {
-        try {
-            Object handle = player.getClass().getMethod("getHandle").invoke(player);
-            Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
-            playerConnection.getClass().getMethod("sendPacket", packetClass).invoke(playerConnection, packet);
-        } catch(Throwable th) {
-            Logger.warning("Could not send packet " + packet + " to player " + player.getName());
-        }
-    }
-
-    protected enum Package {
-        ROOT("."),
-        BLOCK(".block."),
-        COMMAND(".command."),
-        INVENTORY(".inventory."),
-        ENTITY(".entity.");
-
-        private String name;
-
-        Package(String name){
-            this.name = name;
-        }
-
-        public String getName(){
-            return name;
-        }
     }
 }

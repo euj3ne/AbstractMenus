@@ -15,12 +15,12 @@ public class ActionSkinReset implements Action {
 
     private final TypeBool reset;
 
-    private ActionSkinReset(TypeBool reset){
+    private ActionSkinReset(TypeBool reset) {
         this.reset = reset;
     }
 
-    public void activate(Player player, Menu menu, Item clickedItem){
-        if (reset.getBool(player, menu)){
+    public void activate(Player player, Menu menu, Item clickedItem) {
+        if (reset.getBool(player, menu)) {
             Handlers.getSkinHandler().resetSkin(player);
         }
     }

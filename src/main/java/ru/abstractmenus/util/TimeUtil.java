@@ -6,18 +6,19 @@ public final class TimeUtil {
 
     private static TimeParser parser;
 
-    private TimeUtil() {}
+    private TimeUtil() {
+    }
 
-    public static void init(MainConfig conf){
+    public static void init(MainConfig conf) {
         parser = new TimeParser(conf.getTimeDay(), conf.getTimeHour(),
                 conf.getTimeMinute(), conf.getTimeSecond());
     }
 
-    public static long currentTimeTicks(){
+    public static long currentTimeTicks() {
         return System.currentTimeMillis() / 50;
     }
 
-    public static String getTimeString(long millis){
+    public static String getTimeString(long millis) {
         return parser.toString(millis);
     }
 

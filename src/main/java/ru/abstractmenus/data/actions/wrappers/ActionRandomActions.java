@@ -16,7 +16,7 @@ public class ActionRandomActions implements Action {
 
     private final List<Actions> actions;
 
-    private ActionRandomActions(List<Actions> actions){
+    private ActionRandomActions(List<Actions> actions) {
         this.actions = actions;
     }
 
@@ -25,7 +25,7 @@ public class ActionRandomActions implements Action {
         int index = ThreadLocalRandom.current().nextInt(actions.size());
         Actions actions = this.actions.get(index);
 
-        if (actions != null){
+        if (actions != null) {
             actions.activate(player, menu, clickedItem);
         }
     }

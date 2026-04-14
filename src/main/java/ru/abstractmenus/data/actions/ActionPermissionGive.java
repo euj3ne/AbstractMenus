@@ -1,6 +1,7 @@
 package ru.abstractmenus.data.actions;
 
 
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import ru.abstractmenus.api.Action;
 import ru.abstractmenus.api.Handlers;
@@ -16,14 +17,11 @@ public class ActionPermissionGive implements Action {
 
     private boolean isIgnorePlaceholder = false;
 
+    @Setter
     private List<String> permissions;
 
     public void setIgnorePlaceholder(boolean ignorePlaceholder) {
         isIgnorePlaceholder = ignorePlaceholder;
-    }
-
-    public void setPermissions(List<String> permissions) {
-        this.permissions = permissions;
     }
 
     @Override

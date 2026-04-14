@@ -1,5 +1,6 @@
 package ru.abstractmenus.data.actions;
 
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import ru.abstractmenus.api.Action;
 import ru.abstractmenus.api.Handlers;
@@ -41,6 +42,7 @@ public class ActionInputChat implements Action {
 
     public static class InputAction {
 
+        @Getter
         private final Player player;
         private final String varName;
         private final boolean global;
@@ -57,10 +59,6 @@ public class ActionInputChat implements Action {
             this.cancelWord = cancelWord;
             this.onInput = onInput;
             this.onCancel = onCancel;
-        }
-
-        public Player getPlayer() {
-            return player;
         }
 
         public void input(String message) {

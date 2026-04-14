@@ -13,51 +13,52 @@ public final class BukkitTasks {
     @Setter
     private static FoliaLib foliaLib;
 
-    private BukkitTasks(){}
+    private BukkitTasks() {
+    }
 
-    public static void runTask(Runnable runnable){
+    public static void runTask(Runnable runnable) {
         if (foliaLib.isFolia()) {
             foliaLib.getScheduler().runNextTick(task -> runnable.run());
             return;
         }
-        new BukkitRunnable(){
-            public void run(){
+        new BukkitRunnable() {
+            public void run() {
                 runnable.run();
             }
         }.runTask(plugin);
     }
 
-    public static void runTaskAsync(Runnable runnable){
+    public static void runTaskAsync(Runnable runnable) {
         if (foliaLib.isFolia()) {
             foliaLib.getScheduler().runAsync(task -> runnable.run());
             return;
         }
-        new BukkitRunnable(){
-            public void run(){
+        new BukkitRunnable() {
+            public void run() {
                 runnable.run();
             }
         }.runTaskAsynchronously(plugin);
     }
 
-    public static void runTaskLater(Runnable runnable, long delay){
+    public static void runTaskLater(Runnable runnable, long delay) {
         if (foliaLib.isFolia()) {
             foliaLib.getScheduler().runLater(runnable, delay);
             return;
         }
-        new BukkitRunnable(){
-            public void run(){
+        new BukkitRunnable() {
+            public void run() {
                 runnable.run();
             }
         }.runTaskLater(plugin, delay);
     }
 
-    public static void runTaskLaterAsync(Runnable runnable, long delay){
+    public static void runTaskLaterAsync(Runnable runnable, long delay) {
         if (foliaLib.isFolia()) {
             foliaLib.getScheduler().runLaterAsync(runnable, delay);
             return;
         }
-        new BukkitRunnable(){
-            public void run(){
+        new BukkitRunnable() {
+            public void run() {
                 runnable.run();
             }
         }.runTaskLaterAsynchronously(plugin, delay);

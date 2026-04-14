@@ -8,7 +8,8 @@ import java.util.Objects;
 
 public final class ActivatorUtil {
 
-    private ActivatorUtil() { }
+    private ActivatorUtil() {
+    }
 
     public static boolean checkHand(PlayerInteractEvent event) {
         try {

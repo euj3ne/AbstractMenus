@@ -18,17 +18,17 @@ public class OpenClickNPC extends Activator {
 
     private final List<Integer> ids;
 
-    private OpenClickNPC(List<Integer> ids){
+    private OpenClickNPC(List<Integer> ids) {
         this.ids = ids;
     }
 
     @EventHandler
-    public void onNpcClick(NPCRightClickEvent event){
+    public void onNpcClick(NPCRightClickEvent event) {
         checkClicked(event, event.getClicker());
     }
 
     @EventHandler
-    public void onNpcClick(NPCLeftClickEvent event){
+    public void onNpcClick(NPCLeftClickEvent event) {
         checkClicked(event, event.getClicker());
     }
 

@@ -13,18 +13,18 @@ public class AnimatedMenuSerializer implements MenuSerializer<AnimatedMenu> {
     public AnimatedMenu deserialize(ConfigNode node, String title, int size) throws NodeSerializeException {
         AnimatedMenu menu = new AnimatedMenu(title, size);
 
-        if(node.node("onAnimStart").rawValue() != null){
+        if (node.node("onAnimStart").rawValue() != null) {
             menu.setAnimStartActions(node.node("onAnimStart").getValue(Actions.class));
         }
 
-        if(node.node("onAnimEnd").rawValue() != null){
+        if (node.node("onAnimEnd").rawValue() != null) {
             menu.setAnimEndActions(node.node("onAnimEnd").getValue(Actions.class));
         }
 
         menu.setLoop(node.node("loop").getBoolean(false));
         menu.setFrames(node.node("frames").getList(Frame.class));
 
-        if(node.node("items").rawValue() != null){
+        if (node.node("items").rawValue() != null) {
             menu.setItems(node.node("items").getList(Item.class));
         }
 

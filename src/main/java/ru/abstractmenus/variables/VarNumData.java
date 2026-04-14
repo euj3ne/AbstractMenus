@@ -1,10 +1,12 @@
 package ru.abstractmenus.variables;
 
+import lombok.Getter;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
 import ru.abstractmenus.datatype.TypeDouble;
 
+@Getter
 public class VarNumData {
 
     private final String player;
@@ -15,18 +17,6 @@ public class VarNumData {
         this.player = player;
         this.name = name;
         this.value = value;
-    }
-
-    public String getPlayer() {
-        return player;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public TypeDouble getValue() {
-        return value;
     }
 
     public static class Serializer implements NodeSerializer<VarNumData> {

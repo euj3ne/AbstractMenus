@@ -14,7 +14,7 @@ public class ActionInventoryClear implements Action {
 
     private final TypeBool clear;
 
-    private ActionInventoryClear(TypeBool clear){
+    private ActionInventoryClear(TypeBool clear) {
         this.clear = clear;
     }
 

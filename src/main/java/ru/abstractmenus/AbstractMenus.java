@@ -22,6 +22,7 @@ import ru.abstractmenus.commands.Command;
 import ru.abstractmenus.commands.VarCommand;
 import ru.abstractmenus.commands.VarpCommand;
 import ru.abstractmenus.commands.am.CommandOpen;
+import ru.abstractmenus.commands.am.CommandPluginVersion;
 import ru.abstractmenus.commands.am.CommandReload;
 import ru.abstractmenus.commands.am.CommandServe;
 import ru.abstractmenus.commands.var.*;
@@ -57,6 +58,7 @@ import ru.abstractmenus.variables.VariableManagerImpl;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 
 @Getter
@@ -71,14 +73,6 @@ public final class AbstractMenus extends JavaPlugin implements AbstractMenusPlug
     @Getter
     @Setter
     public boolean isProxyMode;
-
-    public Metrics getMetrics() {
-        return metrics;
-    }
-
-    public CommandManager getCommandManager() {
-        return commandManager;
-    }
 
     @Override
     public Plugin getPlugin() {
@@ -142,7 +136,7 @@ public final class AbstractMenus extends JavaPlugin implements AbstractMenusPlug
             new MenuManager(this, config);
 
             registerProviders();
-            registerCommands();
+            registerCommands(config);
 
             Serializers.init(this);
             ItemProps.init();
@@ -205,11 +199,12 @@ public final class AbstractMenus extends JavaPlugin implements AbstractMenusPlug
         getServer().getMessenger().unregisterOutgoingPluginChannel(this, "BungeeCord");
     }
 
-    private void registerCommands() {
+    private void registerCommands(MainConfig config) {
         Command am = new AbstractMenuCommand("am.admin")
                 .addSub("reload", new CommandReload())
-                .addSub("open", new CommandOpen())
-                .addSub("serve", new CommandServe());
+                .addSub("open", new CommandOpen(config))
+                .addSub("serve", new CommandServe())
+                .addSub("version", new CommandPluginVersion());
 
         Command var = new VarCommand("am.admin")
                 .addSub("get", new VarGet())
@@ -229,9 +224,9 @@ public final class AbstractMenus extends JavaPlugin implements AbstractMenusPlug
                 .addSub("mul", new VarpMul())
                 .addSub("div", new VarpDiv());
 
-        getServer().getPluginCommand("am").setExecutor(am);
-        getServer().getPluginCommand("var").setExecutor(var);
-        getServer().getPluginCommand("varp").setExecutor(varp);
+        Objects.requireNonNull(getServer().getPluginCommand("am")).setExecutor(am);
+        Objects.requireNonNull(getServer().getPluginCommand("var")).setExecutor(var);
+        Objects.requireNonNull(getServer().getPluginCommand("varp")).setExecutor(varp);
     }
 
     private void disablePlugin() {

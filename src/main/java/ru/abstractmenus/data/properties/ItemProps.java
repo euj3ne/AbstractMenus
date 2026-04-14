@@ -28,6 +28,7 @@ public final class ItemProps {
         Types.registerItemProperty("unbreakable", PropUnbreakable.class, new PropUnbreakable.Serializer());
         Types.registerItemProperty("potionData", PropPotionData.class, new PropPotionData.Serializer());
         Types.registerItemProperty("fireworkData", PropFireworkData.class, new PropFireworkData.Serializer());
+        Types.registerItemProperty("attributeModifier", PropAttributeModifier.class, new PropAttributeModifier.Serializer());
         Types.registerItemProperty("bookData", PropBookData.class, new PropBookData.Serializer());
         Types.registerItemProperty("bannerData", PropBannerData.class, new PropBannerData.Serializer());
         Types.registerItemProperty("shieldData", PropShieldData.class, new PropShieldData.Serializer());

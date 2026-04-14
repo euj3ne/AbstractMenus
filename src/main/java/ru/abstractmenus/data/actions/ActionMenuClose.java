@@ -18,19 +18,19 @@ public class ActionMenuClose implements Action {
     private TypeBool isClose;
     private TypeInt ticks = null;
 
-    private ActionMenuClose(TypeBool value){
+    private ActionMenuClose(TypeBool value) {
         this.isClose = value;
     }
 
-    private ActionMenuClose(TypeInt ticks){
+    private ActionMenuClose(TypeInt ticks) {
         this.ticks = ticks;
     }
 
     @Override
     public void activate(Player player, Menu menu, Item clickedItem) {
-        if(ticks != null) {
+        if (ticks != null) {
             BukkitTasks.runTaskLater(() ->
-                    MenuManager.instance().closeMenu(player),
+                            MenuManager.instance().closeMenu(player),
                     ticks.getInt(player, menu));
         } else {
             if (isClose.getBool(player, menu))
@@ -42,9 +42,9 @@ public class ActionMenuClose implements Action {
 
         @Override
         public ActionMenuClose deserialize(Class type, ConfigNode node) throws NodeSerializeException {
-            try{
+            try {
                 return new ActionMenuClose(node.getValue(TypeInt.class));
-            } catch (Exception e){
+            } catch (Exception e) {
                 return new ActionMenuClose(node.getValue(TypeBool.class));
             }
         }

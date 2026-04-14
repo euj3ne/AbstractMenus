@@ -11,19 +11,19 @@ public class Matrix {
 
     private final Map<Integer, Item> templates;
 
-    public Matrix(Map<Integer, Item> templates){
+    public Matrix(Map<Integer, Item> templates) {
         this.templates = templates;
     }
 
-    public Item getItem(int slot){
+    public Item getItem(int slot) {
         return templates.get(slot);
     }
 
-    public Collection<Integer> getSlots(){
+    public Collection<Integer> getSlots() {
         return templates.keySet();
     }
 
-    public static class Serializer implements NodeSerializer<Matrix>{
+    public static class Serializer implements NodeSerializer<Matrix> {
 
         @Override
         public Matrix deserialize(Class type, ConfigNode node) throws NodeSerializeException {

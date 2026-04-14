@@ -28,8 +28,9 @@ public class TypeLong extends DataType {
     public static class Serializer implements NodeSerializer<TypeLong> {
 
         public TypeLong deserialize(Class type, ConfigNode node) throws NodeSerializeException {
-            if(node.rawValue() instanceof Integer || node.rawValue() instanceof Long) return new TypeLong(node.getInt());
-            if(!hasPlaceholder(node.getString("")))
+            if (node.rawValue() instanceof Integer || node.rawValue() instanceof Long)
+                return new TypeLong(node.getInt());
+            if (!hasPlaceholder(node.getString("")))
                 throw new NodeSerializeException(node, "Number type haven't placeholder to replace");
             return new TypeLong(node.getString());
         }

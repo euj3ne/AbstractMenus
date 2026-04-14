@@ -1,5 +1,7 @@
 package ru.abstractmenus.command;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ru.abstractmenus.api.Handlers;
@@ -14,13 +16,17 @@ import java.util.stream.Collectors;
 
 public class Command {
 
+    @Getter
     private final String name;
+    @Getter
     private final List<String> aliases;
     private final List<Argument> args;
     private final String errorMessage;
     private final String helpPrefix;
+    @Getter
     private final boolean override;
 
+    @Setter
     private boolean playerOnly;
     private CommandHandler handler;
 
@@ -35,18 +41,6 @@ public class Command {
         this.override = override;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public List<String> getAliases() {
-        return aliases;
-    }
-
-    public boolean isOverride() {
-        return override;
-    }
-
     public String help() {
         return "/" + name + " " + args.stream()
                 .map(Argument::help)
@@ -56,10 +50,6 @@ public class Command {
     public void setHandler(CommandHandler handler) {
         if (handler != null)
             this.handler = handler;
-    }
-
-    public void setPlayerOnly(boolean playerOnly) {
-        this.playerOnly = playerOnly;
     }
 
     public void execute(CommandSender sender, List<String> args) {
@@ -87,7 +77,8 @@ public class Command {
                             ctx.add(arg.getKey(), defObj);
                             continue;
                         }
-                    } catch (Throwable ignore) {}
+                    } catch (Throwable ignore) {
+                    }
                 }
 
                 sender.sendMessage(String.format(errorMessage, arg.getErrorMessage()));
@@ -154,7 +145,7 @@ public class Command {
                     ? values.subList(1, values.size())
                     : Collections.emptyList();
 
-            return new Command(values.get(0), aliases, Collections.emptyList(),
+            return new Command(values.getFirst(), aliases, Collections.emptyList(),
                     Colors.of(defMsg), Colors.of(defHelp), false);
         }
 

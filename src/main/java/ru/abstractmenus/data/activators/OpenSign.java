@@ -1,5 +1,6 @@
 package ru.abstractmenus.data.activators;
 
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -63,7 +64,7 @@ public class OpenSign extends Activator {
 
         if (!(action.equals(Action.RIGHT_CLICK_BLOCK) || !action.equals(Action.LEFT_CLICK_BLOCK))
                 || block == null
-                || !block.getType().name().toLowerCase().contains("sign")
+                || !Tag.SIGNS.isTagged(block.getType())
         ) {
             return;
         }

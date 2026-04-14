@@ -9,9 +9,7 @@ public final class StringUtil {
     private StringUtil(){}
 
     public static boolean contains(String str, char ch){
-        char[] arr = str.toCharArray();
-        for (char c : arr) if (c == ch) return true;
-        return false;
+        return str.indexOf(ch) >= 0;
     }
 
     public static String generateRandom(int length) {
@@ -31,6 +29,10 @@ public final class StringUtil {
     }
 
     public static String replaceKeyPrefix(String key) {
-        return key.replaceFirst("_+", "");
+        // Strip leading '_' chars without compiling a regex on every call.
+        int i = 0;
+        int len = key.length();
+        while (i < len && key.charAt(i) == '_') i++;
+        return i == 0 ? key : key.substring(i);
     }
 }

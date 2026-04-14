@@ -14,8 +14,9 @@ import java.util.regex.Pattern;
 
 public class PlaceholderDefaultHandler implements PlaceholderHandler {
 
+    private static final Pattern PATTERN = Pattern.compile("%(\\S+)%");
+
     private final Map<String, PlaceholderHook> hooks = new HashMap<>();
-    private final Pattern pattern = Pattern.compile("%(\\S+)%");
 
     @Override
     public String replacePlaceholder(Player player, String placeholder) {
@@ -26,7 +27,7 @@ public class PlaceholderDefaultHandler implements PlaceholderHandler {
     public String replace(Player player, String str) {
         if (player == null || str.indexOf('%') == -1) return str;
 
-        Matcher matcher = pattern.matcher(str);
+        Matcher matcher = PATTERN.matcher(str);
         StringBuilder sb = null;
 
         while (matcher.find()) {

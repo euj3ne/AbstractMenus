@@ -5,15 +5,14 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import ru.abstractmenus.placeholders.PlaceholderHook;
 
-import java.util.Arrays;
-
 public class ServerPlaceholders implements PlaceholderHook {
+
+    private static final String PLAYERS_PREFIX = "players_";
 
     @Override
     public String replace(String placeholder, Player player) {
-        if (placeholder.startsWith("players_")) {
-            String[] arr = placeholder.split("_");
-            String worldName = String.join("_", Arrays.copyOfRange(arr, 2, arr.length));
+        if (placeholder.startsWith(PLAYERS_PREFIX)) {
+            String worldName = placeholder.substring(PLAYERS_PREFIX.length());
             World world = Bukkit.getWorld(worldName);
             return world != null ? String.valueOf(world.getPlayers().size()) : "0";
         }

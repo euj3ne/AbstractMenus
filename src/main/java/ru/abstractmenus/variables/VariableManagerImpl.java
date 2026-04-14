@@ -98,7 +98,7 @@ public final class VariableManagerImpl implements VariableManager {
         double value;
 
         if (variable == null) {
-            name = key.split(":")[1];
+            name = key.substring(key.indexOf(':') + 1);
             value = func.apply(0.0);
         } else {
             name = variable.name();

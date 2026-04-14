@@ -30,8 +30,9 @@ public class PropData implements ItemProperty {
 
     @Override
     public void apply(ItemStack itemStack, ItemMeta meta, Player player, Menu menu) {
-        itemStack.getData().setData(data.getByte(player, menu));
-        itemStack.setDurability(data.getByte(player, menu));
+        byte resolved = data.getByte(player, menu);
+        itemStack.getData().setData(resolved);
+        itemStack.setDurability(resolved);
     }
 
     public static class Serializer implements NodeSerializer<PropData> {

@@ -71,12 +71,7 @@ public class GeneratedMenu extends SimpleMenu {
             if (openActions != null)
                 openActions.activate(player, this, null);
 
-            snapshot = new ArrayList<>(catalog.snapshot(player, this));
-            perPage = matrix.getSlots().size();
-            pages = snapshot.size() / perPage;
-
-            if (snapshot.size() % perPage > 0) pages++;
-
+            // snapshot/perPage/pages are computed inside refresh(); calling it once is enough.
             refresh(player);
 
             player.openInventory(inventory);

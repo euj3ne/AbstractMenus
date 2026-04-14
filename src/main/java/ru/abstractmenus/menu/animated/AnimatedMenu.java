@@ -62,9 +62,9 @@ public class AnimatedMenu extends SimpleMenu {
         Frame frame = frames.get(currentFrame);
 
         if (TimeUtil.currentTimeTicks() >= lastPlayTime + frame.getDelay()) {
-            Map<Integer, Item> items = frame.play(player, this);
+            Map<Integer, Frame.PlayedSlot> played = frame.play(player, this);
 
-            if (items != null) {
+            if (played != null) {
                 if (frame.getStartActions() != null)
                     frame.getStartActions().activate(player, this, null);
 
@@ -77,11 +77,14 @@ public class AnimatedMenu extends SimpleMenu {
                     placeItems(player);
                 }
 
-                showedItems.putAll(items);
-
-                for (Map.Entry<Integer, Item> entry : items.entrySet()) {
-                    if (entry.getKey() >= 0 && entry.getKey() < inventory.getSize()) {
-                        inventory.setItem(entry.getKey(), entry.getValue().build(player, this));
+                int size = inventory.getSize();
+                for (Map.Entry<Integer, Frame.PlayedSlot> entry : played.entrySet()) {
+                    int slot = entry.getKey();
+                    Frame.PlayedSlot ps = entry.getValue();
+                    showedItems.put(slot, ps.item());
+                    if (slot >= 0 && slot < size) {
+                        // Frame.play already built the stack — no second build here.
+                        inventory.setItem(slot, ps.stack());
                     }
                 }
 

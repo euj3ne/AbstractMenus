@@ -17,6 +17,18 @@ public class SimpleItem implements Item {
     private Map<String, ItemProperty> simpleProps;
     private Map<String, ItemProperty> allProps = new LinkedHashMap<>();
 
+    /**
+     * Copy-on-write flag. {@code true} for a freshly-constructed (template) item — the
+     * three property maps may be mutated in-place. Set to {@code false} by {@link #clone()}
+     * so the clone shares the template's map references; the next mutation triggers a real
+     * copy via {@link #ensureOwnedProps()}.
+     *
+     * <p>Most refresh ticks never mutate properties — for those clones we now skip three
+     * {@code LinkedHashMap} allocations per item per refresh (54 items × 100 players ×
+     * 20 TPS ≈ 324 000 maps/sec previously).
+     */
+    private boolean propsOwned = true;
+
     @Override
     public Map<String, ItemProperty> getProperties() {
         return allProps;
@@ -24,6 +36,7 @@ public class SimpleItem implements Item {
 
     @Override
     public void addProperty(String key, ItemProperty property) {
+        ensureOwnedProps();
         String lowerKey = key.toLowerCase();
 
         if (property.canReplaceMaterial()) {
@@ -46,6 +59,7 @@ public class SimpleItem implements Item {
 
     @Override
     public ItemProperty removeProperty(String key) {
+        ensureOwnedProps();
         String lowerKey = key.toLowerCase();
         ItemProperty prop = allProps.remove(lowerKey);
 
@@ -54,6 +68,14 @@ public class SimpleItem implements Item {
         Map<String, ItemProperty> specificMap = prop.canReplaceMaterial() ? materialProps : simpleProps;
         specificMap.remove(lowerKey);
         return prop;
+    }
+
+    private void ensureOwnedProps() {
+        if (propsOwned) return;
+        allProps = new LinkedHashMap<>(allProps);
+        if (materialProps != null) materialProps = new LinkedHashMap<>(materialProps);
+        if (simpleProps != null) simpleProps = new LinkedHashMap<>(simpleProps);
+        propsOwned = true;
     }
 
     @Override
@@ -110,16 +132,10 @@ public class SimpleItem implements Item {
     public SimpleItem clone() {
         try {
             SimpleItem item = (SimpleItem) super.clone();
-            item.allProps = new LinkedHashMap<>(item.allProps);
-
-            if (item.materialProps != null) {
-                item.materialProps = new LinkedHashMap<>(item.materialProps);
-            }
-
-            if (item.simpleProps != null) {
-                item.simpleProps = new LinkedHashMap<>(item.simpleProps);
-            }
-
+            // Share map references with the template; ensureOwnedProps() will lazy-copy
+            // on the first add/remove/setProperties call. ItemProperty.apply() never
+            // mutates these maps, so common refresh paths perform zero allocations here.
+            item.propsOwned = false;
             return item;
         } catch (CloneNotSupportedException e) {
             return null;

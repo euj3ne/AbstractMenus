@@ -2,7 +2,7 @@ main: 'ru.abstractmenus.AbstractMenus'
 name: 'AbstractMenus'
 version: ${version}
 api-version: '1.21'
-author: 'Nanit, BrainRTP'
+authors: ['Nanit', 'BrainRTP', 'WhyZerVellasskx']
 folia-supported: true
 softdepend:
   - 'Vault'

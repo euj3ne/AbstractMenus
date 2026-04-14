@@ -26,56 +26,25 @@ public class OpenSign extends Activator {
         this.text = text;
     }
 
-//    @EventHandler
-//    public void onTableClick(PlayerInteractEvent event) {
-//        if (!ActivatorUtil.checkHand(event)) return;
-//
-//        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-//            Block block = event.getClickedBlock();
-//
-//            if (block == null) return;
-//
-//            if (block.getType().toString().toLowerCase().contains("sign")) {
-//                Sign sign = (Sign) block.getState();
-//                boolean equals = true;
-//
-//                for (int i = 0; i < text.size(); i++) {
-//                    String line = Handlers.getPlaceholderHandler().replace(event.getPlayer(), text.get(i));
-//
-//                    if (!line.equalsIgnoreCase(sign.getLine(i))) {
-//                        equals = false;
-//                    }
-//                }
-//
-//                if (equals)
-//                    openMenu(block, event.getPlayer());
-//            }
-//        }
-//    }
-
     @EventHandler
     public void onTableClick(PlayerInteractEvent event) {
-        if (!ActivatorUtil.checkHand(event)) {
-            return;
-        }
+        if (!ActivatorUtil.checkHand(event)) return;
 
         Action action = event.getAction();
+        if (action != Action.RIGHT_CLICK_BLOCK && action != Action.LEFT_CLICK_BLOCK) return;
+
         Block block = event.getClickedBlock();
+        if (block == null || !Tag.SIGNS.isTagged(block.getType())) return;
+        if (!(block.getState() instanceof Sign sign)) return;
 
-        if (!(action.equals(Action.RIGHT_CLICK_BLOCK) || !action.equals(Action.LEFT_CLICK_BLOCK))
-                || block == null
-                || !Tag.SIGNS.isTagged(block.getType())
-        ) {
-            return;
-        }
-
-        Sign sign = (Sign) block.getState();
         Player player = event.getPlayer();
-        for (int i = 0; i < text.size(); i++) {
+        // Sign has at most 4 lines; clamp to whichever side is shorter so a
+        // mis-configured `text` list with >4 entries can't crash the listener.
+        String[] lines = sign.getLines();
+        int compareLines = Math.min(text.size(), lines.length);
+        for (int i = 0; i < compareLines; i++) {
             String line = Handlers.getPlaceholderHandler().replace(player, text.get(i));
-            if (!line.equalsIgnoreCase(sign.getLine(i))) {
-                return;
-            }
+            if (!line.equalsIgnoreCase(lines[i])) return;
         }
 
         openMenu(block, player);

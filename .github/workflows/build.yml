@@ -1,0 +1,62 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+      - main
+      - develop
+      - 'feature/**'
+      - 'task/**'
+      - 'fix/**'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: Build + test on JDK 21
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Build + tests
+        run: ./gradlew --no-daemon build shadowJar
+
+      - name: Publish test report
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          fail_on_failure: true
+          require_tests: false
+
+      - name: Resolve JAR path
+        id: jar
+        run: echo "path=$(ls build/libs/AbstractMenus-*.jar | head -n1)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload shaded JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: AbstractMenus-jar
+          path: ${{ steps.jar.outputs.path }}
+          if-no-files-found: error
+          retention-days: 14

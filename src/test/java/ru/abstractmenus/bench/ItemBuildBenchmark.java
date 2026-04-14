@@ -7,17 +7,18 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Бенчмарк: имитация паттерна клонирования и построения предметов.
+ * Benchmark: simulates the clone + build pattern of menu items.
  *
- * Текущая проблема в SimpleMenu.placeItems():
- * 1. Item.clone() — deep copy LinkedHashMap props (КАЖДЫЙ предмет)
- * 2. Item.build() — new ItemStack + apply ALL properties
- * 3. applyProperties() — getItemMeta()/setItemMeta() клонирует meta 2x на свойство
+ * Context in SimpleMenu.placeItems():
+ * 1. Item.clone() — deep-copies the LinkedHashMap of properties (EVERY item)
+ * 2. Item.build() — `new ItemStack` + apply ALL properties
+ * 3. applyProperties() — getItemMeta()/setItemMeta() clones meta twice per
+ *    property
  *
- * На 54 слота × 10 свойств × 20 TPS = 21,600 клонов meta/сек.
+ * For 54 slots × 10 properties × 20 TPS that's 21,600 meta clones per sec.
  *
- * Этот бенчмарк замеряет стоимость clone() + map copy,
- * чтобы показать выигрыш от кеширования.
+ * This benchmark measures the cost of clone() + the map copy so the upside
+ * of caching them is visible.
  */
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
@@ -27,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @Fork(1)
 public class ItemBuildBenchmark {
 
-    // Имитация свойств предмета (LinkedHashMap как в SimpleItem)
+    // Simulated item properties (LinkedHashMap as in SimpleItem)
     private LinkedHashMap<String, Object> materialProps;
     private LinkedHashMap<String, Object> simpleProps;
     private LinkedHashMap<String, Object> allProps;
@@ -53,11 +54,11 @@ public class ItemBuildBenchmark {
         allProps.putAll(simpleProps);
     }
 
-    // === Текущий паттерн: deep clone каждый раз ===
+    // === Current pattern: deep clone every time ===
 
     @Benchmark
     public void clone_deepCopy(Blackhole bh) {
-        // Имитация SimpleItem.clone() — создаёт новые LinkedHashMap
+        // Simulates SimpleItem.clone() — allocates fresh LinkedHashMaps
         LinkedHashMap<String, Object> clonedAll = new LinkedHashMap<>(allProps);
         LinkedHashMap<String, Object> clonedMat = new LinkedHashMap<>(materialProps);
         LinkedHashMap<String, Object> clonedSimple = new LinkedHashMap<>(simpleProps);
@@ -66,17 +67,17 @@ public class ItemBuildBenchmark {
         bh.consume(clonedSimple);
     }
 
-    // === Оптимизированный: без клонирования (read-only доступ) ===
+    // === Optimized: no clone (read-only access) ===
 
     @Benchmark
     public void noClone_directAccess(Blackhole bh) {
-        // Если свойства immutable, клонирование не нужно
+        // When properties are immutable, cloning is unnecessary
         bh.consume(allProps);
         bh.consume(materialProps);
         bh.consume(simpleProps);
     }
 
-    // === Полный цикл: 54 предмета с clone (текущий) ===
+    // === Full loop: 54 items with clone (current) ===
 
     @Benchmark
     public void fullMenu_withClone(Blackhole bh) {
@@ -84,19 +85,19 @@ public class ItemBuildBenchmark {
             LinkedHashMap<String, Object> clonedAll = new LinkedHashMap<>(allProps);
             LinkedHashMap<String, Object> clonedMat = new LinkedHashMap<>(materialProps);
             LinkedHashMap<String, Object> clonedSimple = new LinkedHashMap<>(simpleProps);
-            // Имитация build: итерация по свойствам
+            // Simulates build: iterate over properties
             for (Map.Entry<String, Object> entry : clonedAll.entrySet()) {
                 bh.consume(entry.getValue());
             }
         }
     }
 
-    // === Полный цикл: 54 предмета без clone (оптимизированный) ===
+    // === Full loop: 54 items without clone (optimized) ===
 
     @Benchmark
     public void fullMenu_noClone(Blackhole bh) {
         for (int i = 0; i < 54; i++) {
-            // Прямой доступ — без deep copy
+            // Direct access — no deep copy
             for (Map.Entry<String, Object> entry : allProps.entrySet()) {
                 bh.consume(entry.getValue());
             }

@@ -6,14 +6,14 @@ import org.openjdk.jmh.infra.Blackhole;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Бенчмарк: сравнение String.split() vs indexOf/substring
- * для разбора placeholder вроде "val:myVar.player1" и расширений файлов.
+ * Benchmark: String.split() vs indexOf/substring for parsing placeholders
+ * like "val:myVar.player1" and file extensions.
  *
- * Текущая проблема:
- * - VarPlaceholders: split(":") + split("\\.") на КАЖДЫЙ placeholder
- * - FileUtils.getExtension: split("\\.") на каждый файл при загрузке
+ * Context in the codebase:
+ * - VarPlaceholders: split(":") + split("\\.") on EVERY placeholder
+ * - FileUtils.getExtension: split("\\.") on every file at load time
  *
- * split() компилирует regex и создаёт массив каждый раз.
+ * split() compiles a regex and allocates a new array on each call.
  */
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
@@ -32,7 +32,7 @@ public class StringSplitBenchmark {
         fileName = "my_cool_menu.conf";
     }
 
-    // === Placeholder парсинг: текущий (split) ===
+    // === Placeholder parsing: current (split) ===
 
     @Benchmark
     public void varParse_split(Blackhole bh) {
@@ -43,7 +43,7 @@ public class StringSplitBenchmark {
         }
     }
 
-    // === Placeholder парсинг: оптимизированный (indexOf) ===
+    // === Placeholder parsing: optimized (indexOf) ===
 
     @Benchmark
     public void varParse_indexOf(Blackhole bh) {
@@ -62,7 +62,7 @@ public class StringSplitBenchmark {
         }
     }
 
-    // === Расширение файла: текущий (split с regex) ===
+    // === File extension: current (split with regex) ===
 
     @Benchmark
     public void fileExt_split(Blackhole bh) {
@@ -71,7 +71,7 @@ public class StringSplitBenchmark {
         bh.consume(ext);
     }
 
-    // === Расширение файла: оптимизированный (lastIndexOf) ===
+    // === File extension: optimized (lastIndexOf) ===
 
     @Benchmark
     public void fileExt_lastIndexOf(Blackhole bh) {
@@ -80,7 +80,7 @@ public class StringSplitBenchmark {
         bh.consume(ext);
     }
 
-    // === Batch: имитация 54 placeholder парсинга (1 меню рефреш) ===
+    // === Batch: simulate 54 placeholder parses (one menu refresh) ===
 
     @Benchmark
     public void varParse_split_batch54(Blackhole bh) {

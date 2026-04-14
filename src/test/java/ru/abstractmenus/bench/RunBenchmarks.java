@@ -6,20 +6,20 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 /**
- * Точка входа для запуска JMH бенчмарков.
+ * Entry point for the JMH benchmarks.
  *
- * Запуск всех:
+ * Run everything:
  *   ./gradlew jmh
  *
- * Запуск одного:
+ * Run a single benchmark:
  *   ./gradlew jmh -Pbench=PlaceholderReplace
  *
- * Доступные бенчмарки:
- * - PlaceholderReplaceBenchmark — String.replace() в цикле vs StringBuilder
- * - StringSplitBenchmark — split() vs indexOf для парсинга placeholder
- * - SlotContainsBenchmark — HashSet аллокация vs прямая итерация
- * - ItemBuildBenchmark — deep clone LinkedHashMap vs direct access
- * - ConcurrencyBenchmark — HashMap vs ConcurrentHashMap при разных нагрузках
+ * Available benchmarks:
+ * - PlaceholderReplaceBenchmark — String.replace() loop vs StringBuilder
+ * - StringSplitBenchmark — split() vs indexOf for placeholder parsing
+ * - SlotContainsBenchmark — HashSet allocation vs direct iteration
+ * - ItemBuildBenchmark — deep-cloning LinkedHashMap vs direct access
+ * - ConcurrencyBenchmark — HashMap vs ConcurrentHashMap under different loads
  */
 public class RunBenchmarks {
 

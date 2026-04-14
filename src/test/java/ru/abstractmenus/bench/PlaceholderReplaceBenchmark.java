@@ -10,14 +10,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Бенчмарк: сравнение текущей реализации placeholder replacement
- * (String.replace в цикле) vs оптимизированной (StringBuilder + Matcher).
+ * Benchmark: current placeholder-replacement implementation (String.replace
+ * in a loop) vs an optimized one (StringBuilder + Matcher).
  *
- * Текущая проблема: PlaceholderDefaultHandler.replace() вызывает
- * String.replace("%" + placeholder + "%", value) в while-цикле.
- * Каждый вызов создаёт новую строку (immutable), а конкатенация
- * "%" + placeholder + "%" — ещё одну. На 54 предмета × 5 placeholder
- * × 20 TPS = ~5,400 замен/сек на игрока.
+ * Context in the codebase: PlaceholderDefaultHandler.replace() calls
+ * String.replace("%" + placeholder + "%", value) inside a while loop.
+ * Every call allocates a new String (immutable), and the "%" + placeholder
+ * + "%" concatenation allocates another. At 54 items × 5 placeholders ×
+ * 20 TPS that's ~5,400 replacements/sec per player.
  */
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
@@ -29,10 +29,10 @@ public class PlaceholderReplaceBenchmark {
 
     private static final Pattern PATTERN = Pattern.compile("%(\\S+)%");
 
-    // Имитация hooks — возвращают фиксированные значения
+    // Simulated hooks — return fixed values
     private final Map<String, String> hookResults = new HashMap<>();
 
-    // Типичные строки из меню AbstractMenus
+    // Typical strings from AbstractMenus menu configs
     private String simpleLine;
     private String heavyLine;
     private String noPlaceholders;
@@ -52,7 +52,7 @@ public class PlaceholderReplaceBenchmark {
         noPlaceholders = "&aThis is a simple line with no placeholders at all";
     }
 
-    // === Текущая реализация (PlaceholderDefaultHandler.replace) ===
+    // === Current implementation (PlaceholderDefaultHandler.replace) ===
 
     private String replaceCurrent(String str) {
         String result = str;
@@ -61,14 +61,14 @@ public class PlaceholderReplaceBenchmark {
         while (matcher.find()) {
             String placeholder = matcher.group(1);
             String replaced = hookResults.get(placeholder);
-            // Текущий код: result.replace("%" + placeholder + "%", replaced)
+            // Current code: result.replace("%" + placeholder + "%", replaced)
             result = replaced != null ? result.replace("%" + placeholder + "%", replaced) : result;
         }
 
         return result;
     }
 
-    // === Оптимизированная реализация (StringBuilder + appendReplacement) ===
+    // === Optimized implementation (StringBuilder + appendReplacement) ===
 
     private String replaceOptimized(String str) {
         Matcher matcher = PATTERN.matcher(str);
@@ -84,10 +84,10 @@ public class PlaceholderReplaceBenchmark {
         return sb.toString();
     }
 
-    // === Оптимизация с ранним выходом ===
+    // === Optimized with early exit ===
 
     private String replaceWithEarlyExit(String str) {
-        if (str.indexOf('%') == -1) return str;  // Быстрый путь: нет placeholder
+        if (str.indexOf('%') == -1) return str;  // Fast path: no placeholders
 
         Matcher matcher = PATTERN.matcher(str);
         StringBuilder sb = new StringBuilder(str.length() + 32);
@@ -102,7 +102,7 @@ public class PlaceholderReplaceBenchmark {
         return sb.toString();
     }
 
-    // ===== Бенчмарки =====
+    // ===== Benchmarks =====
 
     @Benchmark
     public void current_simple(Blackhole bh) {
@@ -134,7 +134,7 @@ public class PlaceholderReplaceBenchmark {
         bh.consume(replaceWithEarlyExit(noPlaceholders));
     }
 
-    // === Batch: имитация рефреша меню 54 слота (по 1 строке на слот) ===
+    // === Batch: simulate a 54-slot menu refresh (one string per slot) ===
 
     @Benchmark
     public void current_fullMenuRefresh(Blackhole bh) {

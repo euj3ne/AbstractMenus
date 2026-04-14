@@ -9,12 +9,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.IntConsumer;
 
 /**
- * Бенчмарк: сравнение SlotUtil.contains() (создаёт HashSet каждый раз)
- * vs прямой итерации без аллокации коллекции.
+ * Benchmark: SlotUtil.contains() (allocates a fresh HashSet every call)
+ * vs direct iteration without allocating a collection.
  *
- * Текущая проблема: SlotUtil.contains(slot, index) вызывается
- * при каждом клике по инвентарю. Каждый вызов создаёт new HashSet<>(),
- * заполняет его через getSlots(), затем вызывает contains().
+ * Context in the codebase: SlotUtil.contains(slot, index) runs on every
+ * inventory click. Each call does `new HashSet<>()`, populates it via
+ * getSlots(), then checks contains().
  */
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
@@ -24,7 +24,7 @@ import java.util.function.IntConsumer;
 @Fork(1)
 public class SlotContainsBenchmark {
 
-    // Имитация Slot с диапазоном слотов (типичное меню 54 слота)
+    // Simulated Slot with a range of indices (typical 54-slot menu)
     private static final int[] SLOT_RANGE = new int[54];
     static {
         for (int i = 0; i < 54; i++) SLOT_RANGE[i] = i;
@@ -35,26 +35,26 @@ public class SlotContainsBenchmark {
 
     @Setup
     public void setup() {
-        targetSlotHit = 27;   // Середина — есть в диапазоне
-        targetSlotMiss = 99;  // Нет в диапазоне
+        targetSlotHit = 27;   // Middle of the range — hit
+        targetSlotMiss = 99;  // Out of range — miss
     }
 
-    // Имитация Slot.getSlots(IntConsumer)
+    // Simulates Slot.getSlots(IntConsumer)
     private void getSlots(IntConsumer consumer) {
         for (int slot : SLOT_RANGE) {
             consumer.accept(slot);
         }
     }
 
-    // === Текущая реализация: HashSet на каждый вызов ===
+    // === Current implementation: fresh HashSet per call ===
 
     private boolean containsCurrent(int index) {
         Set<Integer> set = new HashSet<>();
-        getSlots(set::add);  // Autoboxing 54 int → Integer
+        getSlots(set::add);  // Autoboxes 54 int → Integer
         return set.contains(index);
     }
 
-    // === Оптимизированная: прямая итерация без аллокации ===
+    // === Optimized: direct iteration, zero allocation ===
 
     private boolean containsOptimized(int index) {
         for (int slot : SLOT_RANGE) {
@@ -63,7 +63,7 @@ public class SlotContainsBenchmark {
         return false;
     }
 
-    // === Оптимизированная с boolean[] кешем (для фиксированных слотов) ===
+    // === Optimized with a boolean[] cache (for fixed slot ranges) ===
 
     private boolean[] cachedSlots;
 
@@ -79,7 +79,7 @@ public class SlotContainsBenchmark {
         return index >= 0 && index < cachedSlots.length && cachedSlots[index];
     }
 
-    // ===== Бенчмарки =====
+    // ===== Benchmarks =====
 
     @Benchmark
     public void current_hit(Blackhole bh) {
@@ -111,7 +111,7 @@ public class SlotContainsBenchmark {
         bh.consume(containsCached(targetSlotMiss));
     }
 
-    // === Batch: 10 кликов подряд (имитация быстрого кликера) ===
+    // === Batch: 10 clicks in a row (rapid-click pattern) ===
 
     @Benchmark
     public void current_rapidClicks(Blackhole bh) {

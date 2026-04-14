@@ -10,15 +10,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Бенчмарк: HashMap vs ConcurrentHashMap для хранилищ меню и профилей.
+ * Benchmark: HashMap vs ConcurrentHashMap for menu / profile storage.
  *
- * Текущие проблемы:
- * - MenuManager.menus = HashMap (не потокобезопасный, read/write из разных потоков)
- * - ProfileStorage.profiles = ConcurrentHashMap (потокобезопасный, но без cleanup)
- * - MenuManager.openedMenus = ConcurrentHashMap (итерируется каждый тик)
+ * Context in the codebase:
+ * - MenuManager.menus = HashMap (not thread-safe, read/write from different threads)
+ * - ProfileStorage.profiles = ConcurrentHashMap (thread-safe, but without cleanup)
+ * - MenuManager.openedMenus = ConcurrentHashMap (iterated every tick)
  *
- * Бенчмарк показывает стоимость разных стратегий доступа к Map
- * при характерных для плагина нагрузках.
+ * Measures the cost of the different access strategies under workloads
+ * typical for the plugin.
  */
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
@@ -49,7 +49,7 @@ public class ConcurrencyBenchmark {
         }
     }
 
-    // === Итерация по всем записям (UpdateTask pattern) ===
+    // === Iterate every entry (UpdateTask pattern) ===
 
     @Benchmark
     public void hashMap_iterate(Blackhole bh) {
@@ -67,7 +67,7 @@ public class ConcurrencyBenchmark {
         }
     }
 
-    // === Lookup по ключу (getMenu / getProfile pattern) ===
+    // === Key lookup (getMenu / getProfile pattern) ===
 
     @Benchmark
     public void hashMap_lookup(Blackhole bh) {
@@ -79,7 +79,7 @@ public class ConcurrencyBenchmark {
         bh.consume(concurrentMap.get(keys[0]));
     }
 
-    // === Put + remove цикл (join/quit pattern) ===
+    // === Put + remove cycle (join/quit pattern) ===
 
     @Benchmark
     public void hashMap_putRemove(Blackhole bh) {

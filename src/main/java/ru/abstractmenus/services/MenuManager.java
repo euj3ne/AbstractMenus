@@ -38,11 +38,20 @@ public final class MenuManager {
 
     private static MenuManager instance;
 
+    /**
+     * Pairs the open Menu with the Player who owns it so the per-tick
+     * {@link UpdateTask} doesn't have to do Bukkit.getPlayer(uuid) on every
+     * iteration. The Player reference becomes stale when the player logs out;
+     * UpdateTask checks isOnline() before using it and removePlayerMenu() drops
+     * the entry on close.
+     */
+    private record OpenedMenu(Menu menu, Player player) {}
+
     private final Plugin plugin;
     private final Path menuFolder;
 
     private final Map<String, Menu> menus = new ConcurrentHashMap<>();
-    private final Map<UUID, Menu> openedMenus = new ConcurrentHashMap<>();
+    private final Map<UUID, OpenedMenu> openedMenus = new ConcurrentHashMap<>();
     private final Map<UUID, ActionInputChat.InputAction> inputActions = new ConcurrentHashMap<>();
 
     private TaskHandle updateTask;
@@ -62,7 +71,8 @@ public final class MenuManager {
     }
 
     public Menu getOpenedMenu(Player player) {
-        return openedMenus.get(player.getUniqueId());
+        OpenedMenu entry = openedMenus.get(player.getUniqueId());
+        return entry == null ? null : entry.menu();
     }
 
     public Menu getMenu(String name) {
@@ -136,11 +146,12 @@ public final class MenuManager {
             removePlayerMenu(player);
             return;
         }
-        openedMenus.put(player.getUniqueId(), menu);
+        openedMenus.put(player.getUniqueId(), new OpenedMenu(menu, player));
     }
 
     public Menu removePlayerMenu(Player player) {
-        return openedMenus.remove(player.getUniqueId());
+        OpenedMenu removed = openedMenus.remove(player.getUniqueId());
+        return removed == null ? null : removed.menu();
     }
 
     public ActionInputChat.InputAction getAndRemoveInputAction(Player player) {
@@ -417,10 +428,12 @@ public final class MenuManager {
 
         @Override
         public void run() {
-            for (Map.Entry<UUID, Menu> entry : openedMenus.entrySet()) {
-                Player player = Bukkit.getPlayer(entry.getKey());
-                if (player != null && player.isOnline()) {
-                    entry.getValue().update(player);
+            // openedMenus stores a Player ref alongside each Menu; avoids a
+            // Bukkit.getPlayer(uuid) lookup per entry per tick.
+            for (OpenedMenu entry : openedMenus.values()) {
+                Player player = entry.player();
+                if (player.isOnline()) {
+                    entry.menu().update(player);
                 }
             }
         }

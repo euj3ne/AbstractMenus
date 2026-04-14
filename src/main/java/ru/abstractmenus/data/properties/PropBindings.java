@@ -1,5 +1,6 @@
 package ru.abstractmenus.data.properties;
 
+import lombok.Getter;
 import ru.abstractmenus.data.Actions;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
@@ -46,6 +47,7 @@ public class PropBindings implements ItemProperty {
         }
     }
 
+    @Getter
     public static class BindGroup {
 
         private final List<ItemProperty> matProps;
@@ -64,18 +66,6 @@ public class PropBindings implements ItemProperty {
                     this.props.add(prop);
                 }
             }
-        }
-
-        public List<ItemProperty> getMatProps() {
-            return matProps;
-        }
-
-        public List<ItemProperty> getProps() {
-            return props;
-        }
-
-        public Rule getRules() {
-            return rules;
         }
     }
 

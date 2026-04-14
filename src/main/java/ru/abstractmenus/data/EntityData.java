@@ -1,27 +1,18 @@
 package ru.abstractmenus.data;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
 import org.bukkit.entity.EntityType;
 
+@Getter
+@RequiredArgsConstructor
 public class EntityData {
 
     private final EntityType type;
     private final String name;
-
-    public EntityData(EntityType type, String name){
-        this.type = type;
-        this.name = name;
-    }
-
-    public EntityType getType() {
-        return type;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     public static class Serializer implements NodeSerializer<EntityData> {
 

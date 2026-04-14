@@ -1,5 +1,7 @@
 package ru.abstractmenus.data.comparator;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.abstractmenus.datatype.TypeDouble;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
@@ -29,39 +31,21 @@ public final class LegacyValueComparator implements ValueComparator {
 
     public static class Comparator {
 
+        @Getter
         private final String param;
+        @Setter
         private List<String> equals;
+        @Setter
         private List<String> equalsIgnoreCase;
+        @Setter
         private List<String> contains;
+        @Setter
         private TypeDouble less = new TypeDouble(Double.MIN_VALUE);
+        @Setter
         private TypeDouble more = new TypeDouble(Double.MIN_VALUE);
 
         public Comparator(String param) {
             this.param = param;
-        }
-
-        public String getParam(){
-            return param;
-        }
-
-        public void setEquals(List<String> equals) {
-            this.equals = equals;
-        }
-
-        public void setEqualsIgnoreCase(List<String> equalsIgnoreCase) {
-            this.equalsIgnoreCase = equalsIgnoreCase;
-        }
-
-        public void setContains(List<String> contains) {
-            this.contains = contains;
-        }
-
-        public void setLess(TypeDouble less) {
-            this.less = less;
-        }
-
-        public void setMore(TypeDouble more) {
-            this.more = more;
         }
 
         public boolean compare(Player player, Menu menu){

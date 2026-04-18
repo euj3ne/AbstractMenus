@@ -16,6 +16,7 @@ softdepend:
   - 'SkinsRestorer'
   - 'ItemsAdder'
   - 'Oraxen'
+  - 'PlayerPoints'
 commands:
   am:
     permission: 'am.admin'

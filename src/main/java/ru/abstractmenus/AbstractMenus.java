@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
+import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -244,6 +245,17 @@ public final class AbstractMenus extends JavaPlugin implements AbstractMenusPlug
             }
         } else {
             Logger.warning("Vault doesn't installed. Economy actions and rules won't work");
+        }
+
+        if (checkDependency("PlayerPoints")) {
+            RegisteredServiceProvider<PlayerPointsAPI> ppProvider = getServer().getServicesManager().getRegistration(PlayerPointsAPI.class);
+
+            if (ppProvider != null) {
+                Handlers.setPointsHandler(new PlayerPointsHandler(ppProvider.getProvider()));
+                Logger.info("Using PlayerPoints");
+            } else {
+                Logger.warning("PlayerPoints service not found");
+            }
         }
 
         if (checkDependency("LuckPerms")) {

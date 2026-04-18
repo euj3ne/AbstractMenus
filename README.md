@@ -53,7 +53,7 @@ current Paper API surface.
   `BukkitTasks` wrapper backed by FoliaLib.
 - **External integrations (soft-deps)** — Vault, LuckPerms, WorldGuard,
   SkinsRestorer, MMOItems, HeadDatabase, ItemsAdder, Oraxen, Citizens,
-  NBT-API.
+  NBT-API, PlayerPoints.
 - **Performance-first** — MiniMessage rewrite, copy-on-write item cloning,
   skull / HDB / player-profile caches, single-build animated frames,
   per-tick player cache (see

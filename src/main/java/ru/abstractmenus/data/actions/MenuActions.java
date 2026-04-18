@@ -25,6 +25,7 @@ public final class MenuActions {
         Types.registerAction("command", ActionCommand.class, new ActionCommand.Serializer());
         Types.registerAction("giveLevel", ActionLevelGive.class, new ActionLevelGive.Serializer());
         Types.registerAction("giveMoney", ActionMoneyGive.class, new ActionMoneyGive.Serializer());
+        Types.registerAction("givePoints", ActionPointsGive.class, new ActionPointsGive.Serializer());
         Types.registerAction("givePermission", ActionPermissionGive.class, new ActionPermissionGive.Serializer());
         Types.registerAction("lpMetaSet", ActionLuckPermsMetaSet.class, new ActionLuckPermsMetaSet.Serializer());
         Types.registerAction("lpMetaRemove", ActionLuckPermsMetaRemove.class, new ActionLuckPermsMetaRemove.Serializer());
@@ -52,6 +53,7 @@ public final class MenuActions {
 
         Types.registerAction("takeLevel", ActionLevelTake.class, new ActionLevelTake.Serializer());
         Types.registerAction("takeMoney", ActionMoneyTake.class, new ActionMoneyTake.Serializer());
+        Types.registerAction("takePoints", ActionPointsTake.class, new ActionPointsTake.Serializer());
         Types.registerAction("takeXp", ActionXpTake.class, new ActionXpTake.Serializer());
         Types.registerAction("teleport", ActionTeleport.class, new ActionTeleport.Serializer());
         Types.registerAction("openBook", ActionBookOpen.class, new ActionBookOpen.Serializer());

@@ -25,7 +25,7 @@ Tests are in `src/test/java/` using JUnit 5 (Jupiter). There are currently 4 tes
 `ru.abstractmenus.AbstractMenus` extends `JavaPlugin`. Initialization order in `onEnable()`:
 1. Load `MainConfig` from HOCON config
 2. Initialize core services (VariableManager, BungeeManager, MenuManager, etc.)
-3. Register external provider handlers (Vault, LuckPerms, PlaceholderAPI, SkinsRestorer)
+3. Register external provider handlers (Vault, PlayerPoints, LuckPerms, PlaceholderAPI, SkinsRestorer)
 4. Register type registries: `ItemProps` → `Activators` → `MenuActions` → `MenuRules` → `Catalogs`
 5. Load menus from disk, register event listeners
 
@@ -49,7 +49,7 @@ Menu (API interface)
 ### Package Structure (`ru.abstractmenus`)
 - **`data/`** — Largest package (~164 files). Contains all action, rule, activator, item property, and catalog implementations. Each has an inner `Serializer` class.
 - **`services/`** — Core managers: `MenuManager` (menu lifecycle, 20-tick update loop), `BungeeManager`, `HeadAnimManager`, `ProfileStorage`
-- **`handlers/`** — Abstraction layer over external plugins (Economy, Permissions, Levels, Placeholders, Skins). Accessed via `Handlers` static facade.
+- **`handlers/`** — Abstraction layer over external plugins (Economy, Points, Permissions, Levels, Placeholders, Skins). Accessed via `Handlers` static facade.
 - **`serializers/`** — HOCON deserialization: `ItemSerializer`, `LocationSerializer`, type adapters
 - **`commands/`** — `/am`, `/var`, `/varp` commands and subcommands
 - **`command/`** — Command framework (parsing, arguments, context)

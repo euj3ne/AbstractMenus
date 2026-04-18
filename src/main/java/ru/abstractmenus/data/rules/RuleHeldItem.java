@@ -7,7 +7,9 @@ import ru.abstractmenus.api.Rule;
 import ru.abstractmenus.api.inventory.Item;
 import ru.abstractmenus.api.inventory.ItemProperty;
 import ru.abstractmenus.api.inventory.Menu;
+import ru.abstractmenus.data.properties.PropItemsAdder;
 import ru.abstractmenus.data.properties.PropMaterial;
+import ru.abstractmenus.data.properties.PropMmoItem;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
@@ -34,6 +36,12 @@ public class RuleHeldItem implements Rule {
                 ItemProperty property = properties.values().iterator().next();
                 if (property instanceof PropMaterial) {
                     return heldItem.getType() == built.getType();
+                }
+                if (property instanceof PropItemsAdder) {
+                    return ((PropItemsAdder) property).matches(heldItem, player);
+                }
+                if (property instanceof PropMmoItem) {
+                    return ((PropMmoItem) property).matches(heldItem, player);
                 }
             }
 

@@ -31,6 +31,13 @@ public class PropItemsAdder implements ItemProperty {
         return false;
     }
 
+    public boolean matches(ItemStack item, Player player) {
+        if (item == null) return false;
+        String resolvedId = Handlers.getPlaceholderHandler().replace(player, this.id);
+        CustomStack stack = CustomStack.byItemStack(item);
+        return stack != null && stack.getNamespacedID().equals(resolvedId);
+    }
+
     @Override
     public void apply(ItemStack item, ItemMeta meta, Player player, Menu menu) {
         String id = Handlers.getPlaceholderHandler().replace(player, this.id);

@@ -1,6 +1,9 @@
 package ru.abstractmenus.data.rules;
 
+import ru.abstractmenus.api.inventory.ItemProperty;
 import ru.abstractmenus.api.inventory.Slot;
+import ru.abstractmenus.data.properties.PropItemsAdder;
+import ru.abstractmenus.data.properties.PropMmoItem;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
@@ -34,8 +37,7 @@ public class RuleInventoryItem implements Rule {
 
                     for (int index : SlotUtil.collect(slot)) {
                         ItemStack inventoryItem = player.getInventory().getItem(index);
-
-                        if (!ItemUtil.isSimilar(built, inventoryItem)) return false;
+                        if (!matchesItem(inventoryItem, item, built, player)) return false;
                     }
                 } catch (Exception e){
                     Logger.severe("Cannot check item in player inventory: " + e.getMessage());
@@ -43,7 +45,7 @@ public class RuleInventoryItem implements Rule {
             } else {
                 try {
                     ItemStack built = item.build(player, menu);
-                    if(!player.getInventory().containsAtLeast(built, built.getAmount())) return false;
+                    if (!hasEnough(player, item, built, player)) return false;
                 } catch (Exception e){
                     Logger.severe("Cannot check item in player inventory: " + e.getMessage());
                 }
@@ -51,6 +53,31 @@ public class RuleInventoryItem implements Rule {
         }
 
         return true;
+    }
+
+    private boolean matchesItem(ItemStack playerItem, Item item, ItemStack built, Player player) {
+        ItemProperty prop = singleProp(item);
+        if (prop instanceof PropItemsAdder) return ((PropItemsAdder) prop).matches(playerItem, player);
+        if (prop instanceof PropMmoItem) return ((PropMmoItem) prop).matches(playerItem, player);
+        return ItemUtil.isSimilar(built, playerItem);
+    }
+
+    private boolean hasEnough(Player player, Item item, ItemStack built, Player p) {
+        ItemProperty prop = singleProp(item);
+        if (prop instanceof PropItemsAdder || prop instanceof PropMmoItem) {
+            int count = 0;
+            for (ItemStack invItem : player.getInventory().getContents()) {
+                if (invItem != null && matchesItem(invItem, item, built, p)) count += invItem.getAmount();
+            }
+            return count >= built.getAmount();
+        }
+        return player.getInventory().containsAtLeast(built, built.getAmount());
+    }
+
+    private ItemProperty singleProp(Item item) {
+        java.util.Map<String, ItemProperty> props = item.getProperties();
+        if (props.size() == 1) return props.values().iterator().next();
+        return null;
     }
 
     public static class Serializer implements NodeSerializer<RuleInventoryItem> {

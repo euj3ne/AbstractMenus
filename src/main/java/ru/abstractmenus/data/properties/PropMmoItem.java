@@ -14,6 +14,7 @@ import ru.abstractmenus.api.Handlers;
 import ru.abstractmenus.api.Logger;
 import ru.abstractmenus.util.bukkit.ItemUtil;
 
+import io.lumine.mythic.lib.api.item.NBTItem;
 import java.util.Arrays;
 
 public class PropMmoItem implements ItemProperty {
@@ -32,6 +33,19 @@ public class PropMmoItem implements ItemProperty {
     @Override
     public boolean isApplyMeta() {
         return false;
+    }
+
+    public boolean matches(ItemStack item, Player player) {
+        if (item == null) return false;
+        String[] arr = Handlers.getPlaceholderHandler().replace(player, this.id).split(":");
+        if (arr.length < 2) return false;
+        try {
+            NBTItem nbt = NBTItem.get(item);
+            return arr[0].equalsIgnoreCase(nbt.getString("MMOITEMS_ITEM_TYPE"))
+                && arr[1].equalsIgnoreCase(nbt.getString("MMOITEMS_ITEM_ID"));
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override

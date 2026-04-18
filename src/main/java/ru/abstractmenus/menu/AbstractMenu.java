@@ -176,12 +176,14 @@ public abstract class AbstractMenu implements Menu {
     }
 
     public void dropPlaced(Player player) {
-        if (draggableSlots != null && !placedItems.isEmpty()) {
-            Location loc = player.getEyeLocation();
-            for (ItemStack item : placedItems.values()) {
-                player.getWorld()
-                        .dropItem(loc, item)
-                        .setVelocity(loc.getDirection().multiply(0.2F));
+        if (!placedItems.isEmpty()) {
+            if (draggableSlots != null) {
+                Location loc = player.getEyeLocation();
+                for (ItemStack item : placedItems.values()) {
+                    player.getWorld()
+                            .dropItem(loc, item)
+                            .setVelocity(loc.getDirection().multiply(0.2F));
+                }
             }
             placedItems.clear();
         }

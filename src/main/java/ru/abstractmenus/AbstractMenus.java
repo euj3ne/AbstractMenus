@@ -42,8 +42,6 @@ import ru.abstractmenus.listeners.ChatListener;
 import ru.abstractmenus.listeners.InventoryListener;
 import ru.abstractmenus.listeners.PlayerListener;
 import ru.abstractmenus.listeners.wg.WGHandlers;
-import ru.abstractmenus.nms.actionbar.ActionBar;
-import ru.abstractmenus.nms.title.Title;
 import ru.abstractmenus.serializers.Serializers;
 import ru.abstractmenus.services.BungeeManager;
 import ru.abstractmenus.services.HeadAnimManager;
@@ -131,9 +129,6 @@ public final class AbstractMenus extends JavaPlugin implements AbstractMenusPlug
             MiniMessageUtil.init(config);
             new VariableManagerImpl(config);
             new BungeeManager(this, config);
-            ActionBar.init();
-            Title.init();
-
             new MenuManager(this, config);
 
             registerProviders();
@@ -312,13 +307,17 @@ public final class AbstractMenus extends JavaPlugin implements AbstractMenusPlug
                 && YamlConfiguration.loadConfiguration(spigotFile.toFile())
                 .getBoolean("settings.bungeecord")) {
             return true;
-        } else if (Optional.of(Bukkit.spigot().getPaperConfig()).map(config ->
-                config.getBoolean("settings.velocity-support.enabled")
-                        || config.getBoolean("proxies.velocity.enabled")).orElse(false)) {
-            return true;
-        } else return ClassInfo.get().isPaper() // Only consider files if classes for that platform are present
+        } else if (ClassInfo.get().isPaper()
                 && Files.exists(paperFile)
                 && YamlConfiguration.loadConfiguration(paperFile.toFile())
-                .getBoolean("settings.velocity-support.enabled");
+                .getBoolean("settings.velocity-support.enabled")) {
+            return true;
+        } else {
+            Path paperGlobalFile = Paths.get("config/paper-global.yml");
+            return ClassInfo.get().isPaper()
+                    && Files.exists(paperGlobalFile)
+                    && YamlConfiguration.loadConfiguration(paperGlobalFile.toFile())
+                    .getBoolean("proxies.velocity.enabled");
+        }
     }
 }

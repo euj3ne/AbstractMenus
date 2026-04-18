@@ -1,8 +1,7 @@
 package ru.abstractmenus.data.actions;
 
 import com.google.gson.JsonElement;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
@@ -74,11 +73,8 @@ public class ActionMessage implements Action {
             }
 
             if (json != null) {
-                BaseComponent[] component = ComponentSerializer.parse(
-                        Handlers.getPlaceholderHandler().replace(player, json));
-
-                if (component != null)
-                    player.spigot().sendMessage(component);
+                String resolved = Handlers.getPlaceholderHandler().replace(player, json);
+                player.sendMessage(GsonComponentSerializer.gson().deserialize(resolved));
             }
 
             if (actionbar != null) {

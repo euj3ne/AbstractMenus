@@ -1,18 +1,17 @@
 package ru.abstractmenus.nms.actionbar;
 
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 
-public abstract class ActionBar {
+public class ActionBar {
 
-    private static volatile ActionBar bar;
-
-    public static void init() {
-        bar = new ActionBar_1_9();
-    }
+    private static final ActionBar INSTANCE = new ActionBar();
 
     public static ActionBar create() {
-        return bar;
+        return INSTANCE;
     }
 
-    public abstract void send(Player player, String message);
+    public void send(Player player, String message) {
+        player.sendActionBar(LegacyComponentSerializer.legacySection().deserialize(message));
+    }
 }

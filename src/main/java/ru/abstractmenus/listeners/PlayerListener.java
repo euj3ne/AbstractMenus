@@ -4,6 +4,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import ru.abstractmenus.services.HeadAnimManager;
 import ru.abstractmenus.services.MenuManager;
 import ru.abstractmenus.services.ProfileStorage;
 import ru.abstractmenus.util.bukkit.Skulls;
@@ -23,6 +24,10 @@ public class PlayerListener implements Listener {
         ProfileStorage storage = ProfileStorage.instance();
         if (storage != null) {
             storage.remove(event.getPlayer());
+        }
+        HeadAnimManager anim = HeadAnimManager.instance();
+        if (anim != null) {
+            anim.clearFrames(event.getPlayer().getUniqueId().toString());
         }
     }
 

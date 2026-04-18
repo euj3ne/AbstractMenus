@@ -37,16 +37,19 @@ public final class Actions implements Iterable<Action> {
     @NotNull
     @Override
     public Iterator<Action> iterator() {
+        if (localActions == null) return Collections.emptyIterator();
         return localActions.iterator();
     }
 
     @Override
     public void forEach(Consumer<? super Action> consumer) {
+        if (localActions == null) return;
         localActions.forEach(consumer);
     }
 
     @Override
     public Spliterator<Action> spliterator() {
+        if (localActions == null) return Spliterators.emptySpliterator();
         return localActions.spliterator();
     }
 

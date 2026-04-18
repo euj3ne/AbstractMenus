@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import ru.abstractmenus.hocon.api.ConfigNode;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializeException;
 import ru.abstractmenus.hocon.api.serialize.NodeSerializer;
@@ -29,6 +31,12 @@ public class BannerData {
     public static class Serializer implements NodeSerializer<BannerData> {
 
         private static final JsonParser JSON_PARSER = new JsonParser();
+        private static final DyeColor[] BANNER_COLORS = {
+            DyeColor.WHITE, DyeColor.ORANGE, DyeColor.MAGENTA, DyeColor.LIGHT_BLUE,
+            DyeColor.YELLOW, DyeColor.LIME, DyeColor.PINK, DyeColor.GRAY,
+            DyeColor.LIGHT_GRAY, DyeColor.CYAN, DyeColor.PURPLE, DyeColor.BLUE,
+            DyeColor.BROWN, DyeColor.GREEN, DyeColor.RED, DyeColor.BLACK
+        };
 
         @Override
         public BannerData deserialize(Class type, ConfigNode node) throws NodeSerializeException {
@@ -50,8 +58,9 @@ public class BannerData {
                 String pattern = object.get("Pattern").getAsString();
                 byte colorByte = object.get("Color").getAsByte();
 
-                PatternType patternType = PatternType.getByIdentifier(pattern);
-                DyeColor color = DyeColor.getByWoolData(colorByte);
+                @SuppressWarnings("deprecation")
+                PatternType patternType = Registry.BANNER_PATTERN.get(NamespacedKey.minecraft(pattern));
+                DyeColor color = colorByte >= 0 && colorByte < BANNER_COLORS.length ? BANNER_COLORS[colorByte] : null;
 
                 if (patternType == null) throw new NodeSerializeException(node, "Cannot serialize banner pattern from JSON");
                 if (color == null) throw new NodeSerializeException(node, "Cannot serialize banner color from JSON");

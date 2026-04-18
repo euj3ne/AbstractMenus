@@ -3,14 +3,17 @@ package ru.abstractmenus.nms.title;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.title.Title.Times;
 import org.bukkit.entity.Player;
+
+import java.time.Duration;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class Title {
 
-    private static volatile TitleSender sender;
     private String title;
     private String subtitle;
     private int fadeIn;
@@ -18,10 +21,14 @@ public class Title {
     private int stay;
 
     public void send(Player player) {
-        sender.send(player, this);
-    }
-
-    public static void init() {
-        sender = new SenderModern();
+        player.showTitle(net.kyori.adventure.title.Title.title(
+                LegacyComponentSerializer.legacySection().deserialize(title),
+                LegacyComponentSerializer.legacySection().deserialize(subtitle),
+                Times.times(
+                        Duration.ofMillis(fadeIn * 50L),
+                        Duration.ofMillis(stay * 50L),
+                        Duration.ofMillis(fadeOut * 50L)
+                )
+        ));
     }
 }

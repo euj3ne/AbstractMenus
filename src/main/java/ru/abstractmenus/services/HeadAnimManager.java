@@ -45,6 +45,10 @@ public final class HeadAnimManager {
         return null;
     }
 
+    public void clearFrames(String id) {
+        currentFrames.keySet().removeIf(key -> key.endsWith(":" + id));
+    }
+
     public void loadAnimations() throws Exception {
         ConfigNode node = confLoader.load();
 
